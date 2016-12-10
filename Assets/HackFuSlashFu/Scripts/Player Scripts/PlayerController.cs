@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Happy;
+
 [DisallowMultipleComponent]
 public class PlayerController : MonoBehaviour
 {
@@ -10,18 +12,25 @@ public class PlayerController : MonoBehaviour
 	public KeyCode SpecialAttackInput = KeyCode.Mouse1;
 
 	[Header ("Special Attack Properties")]
-	public float SpecialAttackModeDuration = 5.0f;
+	public SpriteRenderer SpecialAttackSpriteRenderer;
+	public float SpecialAttackModeDuration = 2.5f;
 
 	[Header ("Combo Properties")]
-	public int NeededCombo = 10;
+	public int NeededCombo = 200;
 	public float ComboResetTimer = 1.0f;
 	public float ComboOpportunityTime = 2.0f;
 
 	[Header ("Read-Only")]
 	[SerializeField]
 	private int _comboCounter = 0;
+
+	public CustomUnityEvent<int> OnComboCounterChangedEvent = new CustomUnityEvent<int> ();
+
 	[SerializeField]
 	private float _comboTimer = 0.0f;
+	[SerializeField]
+	private float _comboOpportunityTimer = 0.0f;
+
 	[SerializeField]
 	private bool _hasComboOpportunity = false;
 	[SerializeField]
@@ -50,13 +59,28 @@ public class PlayerController : MonoBehaviour
 
 		if (_comboTimer >= ComboResetTimer && !_hasComboOpportunity)
 		{
-			_comboCounter = 0;
+			ResetCombo ();
 //			Debug.Log ("Combo reset.");
 		}
-		else
+		else if(!_isInSpecialAttackMode)
 		{
 			_comboTimer += Time.deltaTime;
 		}
+
+		if (_hasComboOpportunity && !_isInSpecialAttackMode)
+		{
+			_comboOpportunityTimer += Time.deltaTime;
+
+			if (_comboOpportunityTimer >= ComboOpportunityTime)
+				_hasComboOpportunity = false;
+		}
+	}
+
+	private void ResetCombo ()
+	{
+		_comboCounter = 0;
+
+		OnComboCounterChangedEvent.Invoke (_comboCounter);
 	}
 
 	private void IncreaseCombo (int amount)
@@ -64,21 +88,12 @@ public class PlayerController : MonoBehaviour
 		_comboCounter += amount;
 		_comboTimer = 0;
 
+		OnComboCounterChangedEvent.Invoke (_comboCounter);
+
 		Debug.Log ("Combo " + _comboCounter);
 
 		if (_comboCounter >= NeededCombo)
-		{
 			_hasComboOpportunity = true;
-
-			Invoke ("RemoveComboOpportunity", ComboOpportunityTime);
-
-			Debug.Log ("Has combo opportunity.");
-		}
-	}
-
-	private void RemoveComboOpportunity ()
-	{
-		_hasComboOpportunity = false;
 	}
 
 	private void Attack ()
@@ -86,6 +101,9 @@ public class PlayerController : MonoBehaviour
 		Debug.Log ("Attack");
 
 		int newComboCount = _enemiesToAttack.Count;
+
+		if (newComboCount != 0)
+			_comboOpportunityTimer = 0.0f;
 
 		for (int i = 0; i < _enemiesToAttack.Count; i++)
 		{
@@ -100,8 +118,9 @@ public class PlayerController : MonoBehaviour
 	{
 		Debug.Log ("SpecialAttackModeOn");
 
+		SpecialAttackSpriteRenderer.enabled = true;
+		_hasComboOpportunity = false;
 		_isInSpecialAttackMode = true;
-		_comboCounter = 0;
 
 		for (int i = 0; i < _enemiesToSpecialAttack.Count; i++)
 		{
@@ -116,6 +135,9 @@ public class PlayerController : MonoBehaviour
 	{
 		Debug.Log ("SpecialAttackModeOff");
 
+		ResetCombo ();
+
+		SpecialAttackSpriteRenderer.enabled = false;
 		_isInSpecialAttackMode = false;
 	}
 
