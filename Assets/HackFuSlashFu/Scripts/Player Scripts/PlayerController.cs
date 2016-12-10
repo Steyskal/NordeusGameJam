@@ -22,12 +22,14 @@ public class PlayerController : MonoBehaviour
     public float ComboResetTimer = 1.0f;
     public float ComboOpportunityTime = 2.0f;
 
+	public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
+
     [Header("Read-Only")]
     [SerializeField]
     private int _comboCounter = 0;
 
+	[HideInInspector]
     public CustomUnityEvent<int> OnComboCounterChangedEvent = new CustomUnityEvent<int>();
-    public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
 
     [SerializeField]
     private float _comboTimer = 0.0f;
