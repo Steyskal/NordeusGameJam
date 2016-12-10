@@ -41,7 +41,7 @@ namespace AI
         }
         public virtual void Update()
         {
-            Vector3 displacement = velocity * Time.deltaTime ;
+            Vector3 displacement = velocity * Time.deltaTime;
 
             orientation += rotation * Time.deltaTime ;
             if (orientation < 0.0f)

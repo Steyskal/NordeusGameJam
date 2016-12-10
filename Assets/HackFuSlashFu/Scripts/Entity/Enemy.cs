@@ -23,7 +23,11 @@ public class Enemy : Entity
     public virtual void Start()
     {
         OnEnemyComboBonus.AddListener(delegate (int value) { GameManager.Instance.AddScore(value, GameManager.ScoreBonusType.ComboBonus); });
-        Behaviour.target = GameManager.Instance.GetPlayer(transform.position);
+        OnSetBehaviorTarget(GameManager.Instance.GetPlayer(transform.position));
+    }
+    protected virtual void OnSetBehaviorTarget(GameObject target)
+    {
+        Behaviour.target = target;
         Behaviour.enabled = true;
     }
     /// <summary>
@@ -58,8 +62,16 @@ public class Enemy : Entity
 
     protected IEnumerator KnockBackPostEffect(bool behaviorEnabled)
     {
-        if (behaviorEnabled) Behaviour.enabled = false;
+        OnBeforeKnockback(behaviorEnabled);
         yield return new WaitForSeconds(1);
+        OnAfterKnockback(behaviorEnabled);
+    }
+    protected virtual void OnBeforeKnockback(bool behaviorEnabled)
+    {
+        if (behaviorEnabled) Behaviour.enabled = false;
+    }
+    protected virtual void OnAfterKnockback(bool behaviorEnabled)
+    {
         _rb.velocity = Vector3.zero;
         Behaviour.enabled = behaviorEnabled;
         _isKnockbacked = false;
