@@ -6,19 +6,18 @@ using Happy;
 using System;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(AI.Agent))]
 [RequireComponent(typeof(Animator))]
 public class AnimationController : MonoBehaviour
 {
     public string SpeedFloatVar = "Speed";
-    public string AttackBoolVar = "IsAttacking";
+    public string AttackTriggerVar = "IsAttacking";
     public string ComboBoolVar = "IsCombo";
 
     private AI.Agent _agent;
     private Animator _animator;
     void Awake()
     {
-        _agent = GetComponent<AI.Agent>();
+        _agent = GetComponentInParent<AI.Agent>();
         _animator = GetComponent<Animator>();
     }
 
@@ -27,9 +26,9 @@ public class AnimationController : MonoBehaviour
         _animator.SetFloat(SpeedFloatVar, _agent.GetVelocity().magnitude);
     }
 
-    public void SetAttack(bool attack)
+    public void SetAttack()
     {
-        _animator.SetBool(AttackBoolVar, attack);
+        _animator.SetTrigger(AttackTriggerVar);
     }
     public void SetCombo(bool combo)
     {

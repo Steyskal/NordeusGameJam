@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private int _comboCounter = 0;
 
     public CustomUnityEvent<int> OnComboCounterChangedEvent = new CustomUnityEvent<int>();
+    public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
 
     [SerializeField]
     private float _comboTimer = 0.0f;
@@ -117,8 +118,8 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
+        OnAttackEvent.Invoke();
         //		Debug.Log ("Attack");
-
         int newComboCount = _enemiesToAttack.Count;
 
         if (newComboCount != 0)
