@@ -50,7 +50,7 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
         _State = SpawnState.Off;
         _transform = transform;
         WaveTotalCallback.Invoke(Waves.Length.ToString());
-        if (StartOnStart) _State = SpawnState.Waiting;
+        if (StartOnStart) _State = SpawnState.Counting;
     }
 
     void Update()
