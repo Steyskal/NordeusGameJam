@@ -11,7 +11,7 @@ public class Enemy : Entity
     public Happy.CustomUnityEvent<int> OnEnemyComboBonus = new Happy.CustomUnityEvent<int>();
     public AgentBehaviour Behaviour;
 
-    private Agent2D _agent;
+    protected Agent2D _agent;
 
     protected override void Awake()
     {
@@ -51,7 +51,7 @@ public class Enemy : Entity
         StartCoroutine(KnockBackPostEffect());
     }
 
-    private IEnumerator KnockBackPostEffect()
+    protected IEnumerator KnockBackPostEffect()
     {
         yield return new WaitForSeconds(1);
         Behaviour.enabled = true;
