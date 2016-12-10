@@ -27,9 +27,9 @@ public class PlayerController : MonoBehaviour
 	[SerializeField]
 	private bool _isInSpecialAttackMode = false;
 	[SerializeField]
-	private List<GameObject> _enemiesToAttack = new List<GameObject> ();
+	private List<Enemy> _enemiesToAttack = new List<Enemy> ();
 
-	public List<GameObject> EnemiesToAttack
+	public List<Enemy> EnemiesToAttack
 	{
 		get
 		{
@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
 	}
 
 	[SerializeField]
-	private List<GameObject> _enemiesToSpecialAttack = new List<GameObject> ();
+	private List<Enemy> _enemiesToSpecialAttack = new List<Enemy> ();
 
 	void Update ()
 	{
@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
 		if (_comboTimer >= ComboResetTimer && !_hasComboOpportunity)
 		{
 			_comboCounter = 0;
-			Debug.Log ("Combo reset.");
+//			Debug.Log ("Combo reset.");
 		}
 		else
 		{
@@ -59,9 +59,9 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private void IncreaseCombo ()
+	private void IncreaseCombo (int amount)
 	{
-		_comboCounter += _enemiesToAttack.Count;
+		_comboCounter += amount;
 		_comboTimer = 0;
 
 		Debug.Log ("Combo " + _comboCounter);
@@ -85,12 +85,15 @@ public class PlayerController : MonoBehaviour
 	{
 		Debug.Log ("Attack");
 
-		IncreaseCombo ();
+		int newComboCount = _enemiesToAttack.Count;
 
 		for (int i = 0; i < _enemiesToAttack.Count; i++)
 		{
 			Debug.Log (_enemiesToAttack [i].name + " killed.");
+			_enemiesToAttack [i].ApplyDamage (1, _comboCounter);
 		}
+
+		IncreaseCombo (newComboCount);
 	}
 
 	private void StartSpecialAttackMode ()
@@ -103,6 +106,7 @@ public class PlayerController : MonoBehaviour
 		for (int i = 0; i < _enemiesToSpecialAttack.Count; i++)
 		{
 			Debug.Log (_enemiesToSpecialAttack [i].name + " killed.");
+			_enemiesToSpecialAttack [i].ApplyDamage (1, _comboCounter);
 		}
 
 		Invoke ("EndSpecialAttackMode", SpecialAttackModeDuration);
@@ -115,15 +119,18 @@ public class PlayerController : MonoBehaviour
 		_isInSpecialAttackMode = false;
 	}
 
-	public void AddEnemyForSpecialAttak (GameObject enemy)
+	public void AddEnemyForSpecialAttak (Enemy enemy)
 	{
 		if (_isInSpecialAttackMode)
+		{
 			Debug.Log (enemy.name + " killed.");
+			enemy.ApplyDamage (1, _comboCounter);
+		}
 		else
 			_enemiesToSpecialAttack.Add (enemy);
 	}
 
-	public void RemoveEnemyForSpecialAttack (GameObject enemy)
+	public void RemoveEnemyForSpecialAttack (Enemy enemy)
 	{
 		_enemiesToSpecialAttack.Remove (enemy);
 	}
