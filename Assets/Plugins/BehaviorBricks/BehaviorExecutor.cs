@@ -23,12 +23,14 @@ public class BehaviorExecutor : BBUnity.InternalBehaviorExecutor
     /// </summary>
     new void Update()
     {
+		#if UNITY_EDITOR
         bool prev = this.requestTickExecution;
         base.Update();
         if (prev != this.requestTickExecution)
             // Force inspector repaint in editor mode to reactivate
             // Tick button.
             EditorUtility.SetDirty(this);
-    }
+		#endif
+	}
 
 }
