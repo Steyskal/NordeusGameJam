@@ -7,10 +7,14 @@ using UnityEngine.Events;
 public class Enemy : Entity
 {
     //TODO Score System
-
     public Happy.CustomUnityEvent<int> OnEnemyComboBonus = new Happy.CustomUnityEvent<int>();
+    private BehaviorExecutor BehaviourExecutor;
 
-
+    protected override void Awake()
+    {
+        base.Awake();
+        BehaviourExecutor = GetComponent<BehaviorExecutor>();
+    }
     public virtual void Start()
     {
         OnEnemyComboBonus.AddListener(delegate (int value) { GameManager.Instance.AddScore(value, GameManager.ScoreBonusType.ComboBonus); });

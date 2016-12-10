@@ -21,6 +21,8 @@ public class GameManager : MonoSingleton<GameManager>
     [Tooltip("Define one for each ScoreBonusType")]
     public ScoreValuesInformation[] ScoreValues = new ScoreValuesInformation[2];
 
+    private List<GameObject> _players = new List<GameObject>();
+
     [Header("Checkpoint System")]
     [SerializeField]
     private Checkpoint _currentCheckpoint;
@@ -83,6 +85,27 @@ public class GameManager : MonoSingleton<GameManager>
         Score += _scoreValuesDict[type].Value * value;
         _scoreValuesDict[type].CurrentCount++;
         OnScoreChange.Invoke(Score);
+    }
+
+    public void AddPlayer(GameObject player)
+    {
+        _players.Add(player);
+    }
+    public GameObject GetPlayer(Vector3 enemyPosition)
+    {
+        GameObject closestPlayer = null;
+        float distance = float.PositiveInfinity;
+        foreach(GameObject p in _players)
+        {
+            float curDistance = Vector3.Distance(enemyPosition, p.transform.position);
+            if (curDistance < distance)
+            {
+                distance = curDistance;
+                closestPlayer = p;
+            }
+        }
+        if (closestPlayer == null) closestPlayer = GameObject.FindGameObjectWithTag("Player");
+        return closestPlayer;
     }
 
     [Serializable]
