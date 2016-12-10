@@ -18,6 +18,7 @@ public class Entity : MonoBehaviour
     public UnityEvent OnEntityDie = new UnityEvent();
 
     protected WaitForSeconds _waitDestroy;
+    bool _die = false;
 
     public int CurrentHealth
     {
@@ -29,9 +30,7 @@ public class Entity : MonoBehaviour
         set
         {
             _currentHealth = value <= MaxHealth ? value : MaxHealth;
-
-            if (_currentHealth <= 0)
-                Die();
+            
         }
     }
 
@@ -49,9 +48,10 @@ public class Entity : MonoBehaviour
     public virtual bool ApplyDamage(int damage, int comboBonus = 0)
     {
         CurrentHealth -= Mathf.Abs(damage);
-        if (_currentHealth <= 0)
+        if (_currentHealth <= 0 && !_die)
         {
             OnEntityDie.Invoke();
+            Die();
             return true;
         }
         return false;
@@ -59,6 +59,7 @@ public class Entity : MonoBehaviour
 
     public virtual void Die()
     {
+        _die = true;
         StartCoroutine(DoDie());
     }
     public virtual IEnumerator DoDie()
