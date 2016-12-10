@@ -12,23 +12,23 @@ public class SpecialWeapon : MonoBehaviour
 
 	[Header ("Read-Only")]
 	[SerializeField]
-	private PlayerWeaponController _playerWeaponController;
+	private PlayerController _playerController;
 
 	void Awake ()
 	{
-		_playerWeaponController = GetComponentInParent<PlayerWeaponController> ();
+		_playerController = GetComponentInParent<PlayerController> ();
 	}
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
 		if (other.CompareTag (TargetTag))
-			_playerWeaponController.AddEnemyForSpecialAttak (other.gameObject);
+			_playerController.AddEnemyForSpecialAttak (other.gameObject);
 	}
 
 	void OnTriggerExit2D (Collider2D other)
 	{
 		if (other.CompareTag (TargetTag))
-			_playerWeaponController.RemoveEnemyForSpecialAttack (other.gameObject);
+			_playerController.RemoveEnemyForSpecialAttack (other.gameObject);
 	}
 
 	void OnDrawGizmos ()

@@ -10,22 +10,22 @@ public class Weapon : MonoBehaviour
 
 	[Header ("Read-Only")]
 	[SerializeField]
-	private PlayerWeaponController _playerWeaponController;
+	private PlayerController _playerController;
 
 	void Awake ()
 	{
-		_playerWeaponController = GetComponentInParent<PlayerWeaponController> ();
+		_playerController = GetComponentInParent<PlayerController> ();
 	}
 
 	void OnTriggerEnter2D (Collider2D other)
 	{
 		if (other.CompareTag (TargetTag))
-			_playerWeaponController.EnemiesToAttack.Add (other.gameObject);
+			_playerController.EnemiesToAttack.Add (other.gameObject);
 	}
 
 	void OnTriggerExit2D (Collider2D other)
 	{
 		if (other.CompareTag (TargetTag))
-			_playerWeaponController.EnemiesToAttack.Remove (other.gameObject);
+			_playerController.EnemiesToAttack.Remove (other.gameObject);
 	}
 }

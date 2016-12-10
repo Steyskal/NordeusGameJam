@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class PlayerWeaponController : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
 	[Header ("Input Axis Properties")]
 	public KeyCode AttackInput = KeyCode.Mouse0;
