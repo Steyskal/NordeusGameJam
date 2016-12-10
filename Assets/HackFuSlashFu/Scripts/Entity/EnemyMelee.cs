@@ -38,6 +38,7 @@ public class EnemyMelee : Enemy
         base.Start();
         ColliderEvents.OnTriggerEnterTransformEvent.AddListener(OnTargetEnter);
         ColliderEvents.OnTriggerExitTransformEvent.AddListener(OnTargetExit);
+        ColliderEvents.OnTriggerStayEvent.AddListener(OnTriggerStay);
         StartCoroutine(Pursue());
 
     }
@@ -47,12 +48,15 @@ public class EnemyMelee : Enemy
         FaceForward.target = target;
         FaceForward.enabled = true;
     }
+    void OnTriggerStay()
+    {
+        StartCoroutine(Attack());
+    }
 
     void OnTargetEnter(Transform target)
     {
         if (!_toAttack.Contains(target))
             _toAttack.Add(target);
-        StartCoroutine(Attack());
     }
     void OnTargetExit(Transform target)
     {
@@ -69,28 +73,31 @@ public class EnemyMelee : Enemy
     {
         if (_state != States.Attack)
         {
-            _state = States.Attack;
-            Behaviour.enabled = false;
-            FaceForward.enabled = false;
-            yield return _waitCheckAttack;
-
-            float distance = Vector3.Distance(Behaviour.target.transform.position, transform.position);
-            if (_toAttack.Count > 0 && distance > AttackDistance)
+            if (_toAttack.Count > 0)
             {
-                foreach (Transform t in _toAttack)
-                {
-                    Entity e = t.GetComponent<Entity>();
-                    if (e)
-                    {
-                        e.ApplyDamage(1);
-                        Debug.Log("Attacked " + e);
-                    }
-                }
-                Debug.Log("Attacked");
-            }
-            OnAttackEvent.Invoke();
+                _state = States.Attack;
+                Behaviour.enabled = false;
+                FaceForward.enabled = false;
+                yield return _waitCheckAttack;
 
-            yield return _waitAttack;
+                float distance = Vector3.Distance(Behaviour.target.transform.position, transform.position);
+                if (distance > AttackDistance)
+                {
+                    foreach (Transform t in _toAttack)
+                    {
+                        Entity e = t.GetComponent<Entity>();
+                        if (e)
+                        {
+                            e.ApplyDamage(1);
+                            Debug.Log("Attacked " + e);
+                        }
+                    }
+                    Debug.Log("Attacked");
+                }
+                OnAttackEvent.Invoke();
+
+                yield return _waitAttack;
+            }
             yield return Pursue();
         }
         yield break;
