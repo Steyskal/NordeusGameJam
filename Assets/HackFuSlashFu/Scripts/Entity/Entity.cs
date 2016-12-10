@@ -8,6 +8,7 @@ public class Entity : MonoBehaviour
 {
     public int InitialHealth = 10;
     public int MaxHealth = 10;
+    public float DestroyDelay = 0.5f;
 
     [Header("Read-Only")]
     [SerializeField]
@@ -15,6 +16,8 @@ public class Entity : MonoBehaviour
 
     [SerializeField]
     public UnityEvent OnEntityDie = new UnityEvent();
+
+    protected WaitForSeconds _waitDestroy;
 
     public int CurrentHealth
     {
@@ -35,6 +38,7 @@ public class Entity : MonoBehaviour
     protected virtual void Awake()
     {
         CurrentHealth = InitialHealth;
+        _waitDestroy = new WaitForSeconds(DestroyDelay);
     }
     /// <summary>
     /// Applies damage on player and returns true if player will die
@@ -55,6 +59,11 @@ public class Entity : MonoBehaviour
 
     public virtual void Die()
     {
+        StartCoroutine(DoDie());
+    }
+    public virtual IEnumerator DoDie()
+    {
+        yield return _waitDestroy;
         Debug.Log(gameObject.name + " died.");
 
         Destroy(gameObject);
