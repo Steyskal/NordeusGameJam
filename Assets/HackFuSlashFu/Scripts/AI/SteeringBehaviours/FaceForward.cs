@@ -9,14 +9,19 @@ namespace AI
     {
         public bool UseAgent2D = false;
         private Agent _targetAgent;
+        bool _initialized = false;
         public override void Awake()
         {
             base.Awake();
         }
         void OnEnable()
         {
-            target = new GameObject();
-            _targetAgent = target.AddComponent<Agent>();
+            if (!_initialized)
+            {
+                target = new GameObject();
+                _targetAgent = target.AddComponent<Agent>();
+                _initialized = true;
+            }
         }
         void OnDestroy()
         {

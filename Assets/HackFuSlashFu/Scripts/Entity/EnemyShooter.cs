@@ -15,6 +15,7 @@ public class EnemyShooter : Enemy
     public float ShotForce = 100f;
     public float ShotDelay = 1f;
     public GameObject BulletPrefab;
+    public Face FaceBehavior;
 
 
     private States _state = States.Shooting;
@@ -29,8 +30,13 @@ public class EnemyShooter : Enemy
     {
         base.Start();
         Behaviour.enabled = false;
-
         StartCoroutine(Shot());
+    }
+    protected override void OnSetBehaviorTarget(GameObject target)
+    {
+        base.OnSetBehaviorTarget(target);
+        FaceBehavior.target = target;
+        FaceBehavior.enabled = true;
     }
     IEnumerator Shot()
     {
@@ -41,6 +47,17 @@ public class EnemyShooter : Enemy
         
         yield return _waitDelay;
         yield return Shot();
+    }
+
+    protected override void OnAfterKnockback(bool behaviorEnabled)
+    {
+        base.OnAfterKnockback(behaviorEnabled);
+        FaceBehavior.enabled = true;
+    }
+    protected override void OnBeforeKnockback(bool behaviorEnabled)
+    {
+        base.OnBeforeKnockback(behaviorEnabled);
+        FaceBehavior.enabled = false;
     }
 
 }

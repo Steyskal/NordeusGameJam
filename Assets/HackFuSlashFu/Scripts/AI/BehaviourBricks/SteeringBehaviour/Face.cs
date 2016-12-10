@@ -51,9 +51,9 @@ namespace BBUnity.Actions
             {
                 float targetOrientation = 0;
                 if (Use2D)
-                    Mathf.Atan2(direction.y, direction.x);
+                    targetOrientation = Mathf.Atan2(direction.y, direction.x);
                 else
-                    Mathf.Atan2(direction.x, direction.z);
+                    targetOrientation = Mathf.Atan2(direction.x, direction.z);
                 targetOrientation *= Mathf.Rad2Deg;
                 target.GetComponent<Agent>().orientation = targetOrientation;
             }
