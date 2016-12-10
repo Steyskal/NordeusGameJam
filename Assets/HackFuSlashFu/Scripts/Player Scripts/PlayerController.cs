@@ -11,6 +11,9 @@ public class PlayerController : MonoBehaviour
 	public KeyCode AttackInput = KeyCode.Mouse0;
 	public KeyCode SpecialAttackInput = KeyCode.Mouse1;
 
+	[Header ("Knockback Properties")]
+	public float KnockbackForce = 100.0f;
+
 	[Header ("Special Attack Properties")]
 	public SpriteRenderer SpecialAttackSpriteRenderer;
 	public float SpecialAttackModeDuration = 2.5f;
@@ -48,6 +51,13 @@ public class PlayerController : MonoBehaviour
 
 	[SerializeField]
 	private List<Enemy> _enemiesToSpecialAttack = new List<Enemy> ();
+
+	private Transform _transform;
+
+	void Awake ()
+	{
+		_transform = transform;
+	}
 
 	void Update ()
 	{
@@ -96,6 +106,13 @@ public class PlayerController : MonoBehaviour
 			_hasComboOpportunity = true;
 	}
 
+	private void KnockbackTarget (Enemy enemy)
+	{
+		Vector2 direction = enemy.transform.position - _transform.position; 
+
+		enemy.AddKnockBack (direction * KnockbackForce);
+	}
+
 	private void Attack ()
 	{
 //		Debug.Log ("Attack");
@@ -110,6 +127,8 @@ public class PlayerController : MonoBehaviour
 		for (int i = 0; i < _enemiesToAttack.Count; i++)
 		{
 //			Debug.Log (_enemiesToAttack [i].name + " killed.");
+
+			KnockbackTarget (_enemiesToAttack [i]);
 
 			if (_enemiesToAttack [i].ApplyDamage (1, _comboCounter))
 				enemiesToRemove.Add (_enemiesToAttack [i]);
@@ -136,7 +155,9 @@ public class PlayerController : MonoBehaviour
 
 		for (int i = 0; i < _enemiesToSpecialAttack.Count; i++)
 		{
-			Debug.Log (_enemiesToSpecialAttack [i].name + " killed.");
+//			Debug.Log (_enemiesToSpecialAttack [i].name + " killed.");
+
+			KnockbackTarget (_enemiesToSpecialAttack [i]);
 
 			if (_enemiesToSpecialAttack [i].ApplyDamage (1, _comboCounter))
 				enemiesToRemove.Add (_enemiesToSpecialAttack [i]);
