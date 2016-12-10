@@ -19,12 +19,10 @@ public class PlayerMovementController : Agent2D
 	[SerializeField]
 	private Vector2 _movementDirection;
 
-	private Transform _transform;
 	private Rigidbody2D _rigidbody2D;
 
 	void Awake ()
 	{
-		_transform = transform;
 		_rigidbody2D = GetComponent<Rigidbody2D> ();
 	}
 

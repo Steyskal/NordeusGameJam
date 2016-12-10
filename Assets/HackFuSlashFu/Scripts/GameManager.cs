@@ -4,122 +4,149 @@ using UnityEngine;
 
 using Happy;
 using System;
+
 [Serializable]
-public class CustomIntEvent : Happy.CustomUnityEvent<int> { }
+public class CustomIntEvent : Happy.CustomUnityEvent<int>
+{
+
+}
+
 public class GameManager : MonoSingleton<GameManager>
 {
-    [Header("Score System")]
-    public int Score = 0;
+	[Header ("Score System")]
+	public int Score = 0;
 
-    public enum ScoreBonusType
-    {
-        EnemyKill,
-        ComboBonus
-    }
+	public enum ScoreBonusType
+	{
+		EnemyKill,
+		ComboBonus
+	}
 
-    [Header("Score Contribution")]
-    [Tooltip("Define one for each ScoreBonusType")]
-    public ScoreValuesInformation[] ScoreValues = new ScoreValuesInformation[2];
+	[Header ("Score Contribution")]
+	[Tooltip ("Define one for each ScoreBonusType")]
+	public ScoreValuesInformation[] ScoreValues = new ScoreValuesInformation[2];
 
-    private List<GameObject> _players = new List<GameObject>();
+	private List<GameObject> _players = new List<GameObject> ();
 
-    [Header("Checkpoint System")]
-    [SerializeField]
-    private Checkpoint _currentCheckpoint;
-    private Dictionary<ScoreBonusType, ScoreValuesInformation> _scoreValuesDict = new Dictionary<ScoreBonusType, ScoreValuesInformation>();
+	[Header ("Checkpoint System")]
+	[SerializeField]
+	private Checkpoint _currentCheckpoint;
+	private Dictionary<ScoreBonusType, ScoreValuesInformation> _scoreValuesDict = new Dictionary<ScoreBonusType, ScoreValuesInformation> ();
 
-    public CustomIntEvent OnScoreChange = new CustomIntEvent();
+	public CustomIntEvent OnScoreChange = new CustomIntEvent ();
 
-    public Checkpoint CurrentCheckpoint
-    {
-        get
-        {
-            return _currentCheckpoint;
-        }
+	public Checkpoint CurrentCheckpoint
+	{
+		get
+		{
+			return _currentCheckpoint;
+		}
 
-        set
-        {
-            if (_currentCheckpoint)
-                _currentCheckpoint.Deactivate();
+		set
+		{
+			if (_currentCheckpoint)
+				_currentCheckpoint.Deactivate ();
 
-            _currentCheckpoint = value;
-        }
-    }
+			_currentCheckpoint = value;
+		}
+	}
 
-    #region Coins
-    [Header("Read-Only")]
-    [SerializeField]
-    private int _coinsCollected = 0;
-    [SerializeField]
-    private int _coinScore = 0;
-    public int CoinScore
-    {
-        get
-        {
-            return _coinScore;
-        }
+	#region Coins
 
-        set
-        {
-            _coinScore += value;
-            _coinsCollected++;
-        }
-    }
-    #endregion
+	[Header ("Read-Only")]
+	[SerializeField]
+	private int _coinsCollected = 0;
+	[SerializeField]
+	private int _coinScore = 0;
 
-    void Reset()
-    {
-        ScoreValues[0] = new ScoreValuesInformation(ScoreBonusType.EnemyKill, 1);
-        ScoreValues[1] = new ScoreValuesInformation(ScoreBonusType.ComboBonus, 1);
-    }
-    void Awake()
-    {
-        foreach (ScoreValuesInformation s in ScoreValues)
-        {
-            _scoreValuesDict.Add(s.Type, s);
-        }
-    }
+	public int CoinScore
+	{
+		get
+		{
+			return _coinScore;
+		}
 
-    public void AddScore(int value, ScoreBonusType type)
-    {
-        Score += _scoreValuesDict[type].Value * value;
-        _scoreValuesDict[type].CurrentCount++;
-        OnScoreChange.Invoke(Score);
-    }
+		set
+		{
+			_coinScore += value;
+			_coinsCollected++;
+		}
+	}
 
-    public void AddPlayer(GameObject player)
-    {
-        _players.Add(player);
-    }
-    public GameObject GetPlayer(Vector3 enemyPosition)
-    {
-        GameObject closestPlayer = null;
-        float distance = float.PositiveInfinity;
-        foreach(GameObject p in _players)
-        {
-            float curDistance = Vector3.Distance(enemyPosition, p.transform.position);
-            if (curDistance < distance)
-            {
-                distance = curDistance;
-                closestPlayer = p;
-            }
-        }
-        if (closestPlayer == null) closestPlayer = GameObject.FindGameObjectWithTag("Player");
-        return closestPlayer;
-    }
+	#endregion
 
-    [Serializable]
-    public class ScoreValuesInformation
-    {
-        public ScoreBonusType Type;
-        [Tooltip("Multiplier for value")]
-        public int Value;
-        [HideInInspector]
-        public int CurrentCount = 0;
-        public ScoreValuesInformation(ScoreBonusType type, int value)
-        {
-            Type = type;
-            Value = value;
-        }
-    }
+	#region GameOverLogic
+	[HideInInspector]
+	public CustomUnityEvent OnGameOverEvent = new CustomUnityEvent();
+
+	public void GameOver()
+	{
+		OnGameOverEvent.Invoke ();
+
+		for (int i = 0; i < _players.Count; i++)
+		{
+			_players [i].SetActive (false);
+		}
+	}
+	#endregion
+
+	void Reset ()
+	{
+		ScoreValues [0] = new ScoreValuesInformation (ScoreBonusType.EnemyKill, 1);
+		ScoreValues [1] = new ScoreValuesInformation (ScoreBonusType.ComboBonus, 1);
+	}
+
+	void Awake ()
+	{
+		foreach (ScoreValuesInformation s in ScoreValues)
+		{
+			_scoreValuesDict.Add (s.Type, s);
+		}
+	}
+
+	public void AddScore (int value, ScoreBonusType type)
+	{
+		Score += _scoreValuesDict [type].Value * value;
+		_scoreValuesDict [type].CurrentCount++;
+		OnScoreChange.Invoke (Score);
+	}
+
+	public void AddPlayer (GameObject player)
+	{
+		_players.Add (player);
+	}
+
+	public GameObject GetPlayer (Vector3 enemyPosition)
+	{
+		GameObject closestPlayer = null;
+		float distance = float.PositiveInfinity;
+		foreach (GameObject p in _players)
+		{
+			float curDistance = Vector3.Distance (enemyPosition, p.transform.position);
+			if (curDistance < distance)
+			{
+				distance = curDistance;
+				closestPlayer = p;
+			}
+		}
+		if (closestPlayer == null)
+			closestPlayer = GameObject.FindGameObjectWithTag ("Player");
+		return closestPlayer;
+	}
+
+	[Serializable]
+	public class ScoreValuesInformation
+	{
+		public ScoreBonusType Type;
+		[Tooltip ("Multiplier for value")]
+		public int Value;
+		[HideInInspector]
+		public int CurrentCount = 0;
+
+		public ScoreValuesInformation (ScoreBonusType type, int value)
+		{
+			Type = type;
+			Value = value;
+		}
+	}
 }
