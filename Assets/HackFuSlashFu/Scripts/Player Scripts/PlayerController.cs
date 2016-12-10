@@ -15,7 +15,6 @@ public class PlayerController : MonoBehaviour
     public float KnockbackForce = 100.0f;
 
     [Header("Special Attack Properties")]
-    public SpriteRenderer SpecialAttackSpriteRenderer;
     public float SpecialAttackModeDuration = 2.5f;
 
     [Header("Combo Properties")]
@@ -149,7 +148,6 @@ public class PlayerController : MonoBehaviour
     {
         //		Debug.Log ("SpecialAttackModeOn");
 
-        SpecialAttackSpriteRenderer.enabled = true;
         _hasComboOpportunity = false;
         _isInSpecialAttackMode = true;
 
@@ -180,7 +178,6 @@ public class PlayerController : MonoBehaviour
 
         ResetCombo();
 
-        SpecialAttackSpriteRenderer.enabled = false;
         _isInSpecialAttackMode = false;
     }
 
