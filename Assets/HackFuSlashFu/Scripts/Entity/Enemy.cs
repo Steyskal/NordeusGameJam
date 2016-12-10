@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using AI;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,6 +10,7 @@ public class Enemy : Entity
     //TODO Score System
     public Happy.CustomUnityEvent<int> OnEnemyComboBonus = new Happy.CustomUnityEvent<int>();
     private BehaviorExecutor BehaviourExecutor;
+    public AgentBehaviour Behaviour;
 
     protected override void Awake()
     {
@@ -18,6 +20,8 @@ public class Enemy : Entity
     public virtual void Start()
     {
         OnEnemyComboBonus.AddListener(delegate (int value) { GameManager.Instance.AddScore(value, GameManager.ScoreBonusType.ComboBonus); });
+        Behaviour.target = GameManager.Instance.GetPlayer(transform.position);
+        Behaviour.enabled = true;
     }
     /// <summary>
     /// Applies damage on player and returns true if player will die

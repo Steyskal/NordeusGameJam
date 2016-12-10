@@ -10,7 +10,7 @@ namespace BBUnity.Actions
     [Help("Setting the target Parameter")]
     public class FindTarget : GOAction
     {
-        [InParam("target")]
+        [OutParam("target")]
         [Help("Target that will be setted")]
         public Transform target;
 

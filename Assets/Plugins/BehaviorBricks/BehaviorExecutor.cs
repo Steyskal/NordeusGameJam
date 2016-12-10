@@ -11,16 +11,13 @@ using UnityEditor;
 [UnityEngine.AddComponentMenu("Behavior Bricks/Behavior executor component")]
 public class BehaviorExecutor : BBUnity.InternalBehaviorExecutor
 {
-
-#if UNITY_EDITOR
     protected override void Awake()
     {
         setDebugMode();
         base.Awake();
     }
-#endif
+    
 
-#if UNITY_EDITOR
     /// <summary>
     /// In editor mode, 
     /// </summary>
@@ -33,6 +30,5 @@ public class BehaviorExecutor : BBUnity.InternalBehaviorExecutor
             // Tick button.
             EditorUtility.SetDirty(this);
     }
-#endif
 
 }
