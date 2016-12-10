@@ -11,12 +11,14 @@ public class Enemy : Entity
     public Happy.CustomUnityEvent<int> OnEnemyComboBonus = new Happy.CustomUnityEvent<int>();
     public AgentBehaviour Behaviour;
 
-    private Agent2D _agent;
+    protected Agent2D _agent;
+    protected Rigidbody2D _rb;
 
     protected override void Awake()
     {
         base.Awake();
         _agent = GetComponent<Agent2D>();
+        _rb = GetComponent<Rigidbody2D>();
     }
     public virtual void Start()
     {
@@ -41,20 +43,26 @@ public class Enemy : Entity
         return enemyWillDie;
     }
 
+    private bool _isKnockbacked = false;
     public void AddKnockBack(Vector3 force)
     {
-        Behaviour.enabled = false;
+        if (_isKnockbacked) return;
+        _isKnockbacked = true;
         _agent.velocity = Vector3.zero;
-        Steering steering = new Steering();
+        _rb.AddForce(force, ForceMode2D.Impulse);
+        /*Steering steering = new Steering();
         steering.linear = force;
-        _agent.SetSteering(steering,10);
-        StartCoroutine(KnockBackPostEffect());
+        _agent.SetSteering(steering,10);*/
+        StartCoroutine(KnockBackPostEffect(Behaviour.enabled));
     }
 
-    private IEnumerator KnockBackPostEffect()
+    protected IEnumerator KnockBackPostEffect(bool behaviorEnabled)
     {
+        if (behaviorEnabled) Behaviour.enabled = false;
         yield return new WaitForSeconds(1);
-        Behaviour.enabled = true;
+        _rb.velocity = Vector3.zero;
+        Behaviour.enabled = behaviorEnabled;
+        _isKnockbacked = false;
     }
 
 }
