@@ -22,13 +22,13 @@ public class SpecialWeapon : MonoBehaviour
 	void OnTriggerEnter2D (Collider2D other)
 	{
 		if (other.CompareTag (TargetTag))
-			_playerController.AddEnemyForSpecialAttak (other.gameObject);
+			_playerController.AddEnemyForSpecialAttak (other.GetComponent<Enemy>());
 	}
 
 	void OnTriggerExit2D (Collider2D other)
 	{
 		if (other.CompareTag (TargetTag))
-			_playerController.RemoveEnemyForSpecialAttack (other.gameObject);
+			_playerController.RemoveEnemyForSpecialAttack (other.GetComponent<Enemy>());
 	}
 
 	void OnDrawGizmos ()

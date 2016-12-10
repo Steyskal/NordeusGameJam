@@ -20,12 +20,12 @@ public class Weapon : MonoBehaviour
 	void OnTriggerEnter2D (Collider2D other)
 	{
 		if (other.CompareTag (TargetTag))
-			_playerController.EnemiesToAttack.Add (other.gameObject);
+			_playerController.EnemiesToAttack.Add (other.GetComponent<Enemy>());
 	}
 
 	void OnTriggerExit2D (Collider2D other)
 	{
 		if (other.CompareTag (TargetTag))
-			_playerController.EnemiesToAttack.Remove (other.gameObject);
+			_playerController.EnemiesToAttack.Remove (other.GetComponent<Enemy>());
 	}
 }
