@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using AI;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,13 +8,21 @@ using UnityEngine.Events;
 public class Enemy : Entity
 {
     //TODO Score System
-
     public Happy.CustomUnityEvent<int> OnEnemyComboBonus = new Happy.CustomUnityEvent<int>();
+    public AgentBehaviour Behaviour;
 
+    private Agent2D _agent;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        _agent = GetComponent<Agent2D>();
+    }
     public virtual void Start()
     {
         OnEnemyComboBonus.AddListener(delegate (int value) { GameManager.Instance.AddScore(value, GameManager.ScoreBonusType.ComboBonus); });
+        Behaviour.target = GameManager.Instance.GetPlayer(transform.position);
+        Behaviour.enabled = true;
     }
     /// <summary>
     /// Applies damage on player and returns true if player will die
@@ -30,6 +39,22 @@ public class Enemy : Entity
         bool enemyWillDie = base.ApplyDamage(damage);
         if (enemyWillDie) GameManager.Instance.AddScore(1, GameManager.ScoreBonusType.EnemyKill);
         return enemyWillDie;
+    }
+
+    public void AddKnockBack(Vector3 force)
+    {
+        Behaviour.enabled = false;
+        _agent.velocity = Vector3.zero;
+        Steering steering = new Steering();
+        steering.linear = force;
+        _agent.SetSteering(steering,10);
+        StartCoroutine(KnockBackPostEffect());
+    }
+
+    private IEnumerator KnockBackPostEffect()
+    {
+        yield return new WaitForSeconds(1);
+        Behaviour.enabled = true;
     }
 
 }
