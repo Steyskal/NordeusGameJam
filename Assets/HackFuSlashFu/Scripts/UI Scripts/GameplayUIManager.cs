@@ -7,13 +7,16 @@ using Happy;
 
 public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 {
+	[Header ("Combo Properties")]
+	public PlayerController Player;
+	public Slider ComboSlider;
+
 	[Header ("Pause Properties")]
 	public KeyCode PauseKey = KeyCode.Escape;
 	public Canvas PauseCanvas;
 
-	[Header ("Combo Properties")]
-	public PlayerController Player;
-	public Slider ComboSlider;
+	[Header("GameOver Properties")]
+	public Canvas GameOverCanvas;
 
 	[Header ("Read-Only")]
 	[SerializeField]
@@ -24,6 +27,7 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 		_audioListener = Camera.main.GetComponent<AudioListener> ();
 
 		PauseCanvas.enabled = false;
+		GameOverCanvas.enabled = false;
 
 		ComboSlider.minValue = 0;
 		ComboSlider.maxValue = Player.NeededCombo;
