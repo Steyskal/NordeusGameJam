@@ -60,10 +60,13 @@ public class PlayerController : MonoBehaviour
 
     private Transform _transform;
 
+	private Animator _animator;
+
     void Awake()
     {
         _transform = transform;
 		_audioSource = GetComponentInChildren<AudioSource> ();
+		_animator = GetComponentInChildren<Animator> ();
     }
 
     void Update()
@@ -130,9 +133,6 @@ public class PlayerController : MonoBehaviour
         //		Debug.Log ("Attack");
         int newComboCount = _enemiesToAttack.Count;
 
-        if (newComboCount != 0)
-            _comboOpportunityTimer = 0.0f;
-
         List<Enemy> enemiesToRemove = new List<Enemy>();
 
         for (int i = 0; i < _enemiesToAttack.Count; i++)
@@ -150,8 +150,12 @@ public class PlayerController : MonoBehaviour
             _enemiesToAttack.Remove(enemiesToRemove[i]);
             _enemiesToSpecialAttack.Remove(enemiesToRemove[i]);
         }
-
-        IncreaseCombo(newComboCount);
+			
+		if (newComboCount != 0)
+		{
+			_comboOpportunityTimer = 0.0f;
+			IncreaseCombo(newComboCount);
+		}
     }
 
     private void StartSpecialAttackMode()
@@ -160,6 +164,7 @@ public class PlayerController : MonoBehaviour
 
         _hasComboOpportunity = false;
         _isInSpecialAttackMode = true;
+		_animator.SetBool ("IsCombo", _isInSpecialAttackMode);
 
         List<Enemy> enemiesToRemove = new List<Enemy>();
 
@@ -189,6 +194,7 @@ public class PlayerController : MonoBehaviour
         ResetCombo();
 
         _isInSpecialAttackMode = false;
+		_animator.SetBool ("IsCombo", _isInSpecialAttackMode);
     }
 
     public void AddEnemyForSpecialAttak(Enemy enemy)
