@@ -6,6 +6,9 @@ using UnityEngine.Events;
 [DisallowMultipleComponent]
 public class Entity : MonoBehaviour
 {
+	[Header("Audio Properties")]
+	public List<AudioClip> HitAudioClips = new List<AudioClip>();
+
     [Header("Health")]
     public int InitialHealth = 10;
     public int MaxHealth = 10;
@@ -55,6 +58,7 @@ public class Entity : MonoBehaviour
     /// <returns></returns>
     public virtual bool ApplyDamage(int damage, int comboBonus = 0)
     {
+		AudioSource.PlayClipAtPoint (HitAudioClips [Random.Range (0, HitAudioClips.Count)], transform.position, 0.5f);
         OnEntityHit.Invoke();
         GameManager.Instance.OnEntityHit.Invoke();
            CurrentHealth -= Mathf.Abs(damage);
@@ -63,8 +67,12 @@ public class Entity : MonoBehaviour
             if (IsPlayerEntity)
             {
                 GameManager.Instance.IsPlayersDead = true;
-            }
+			}else
+			{
+				GameManager.Instance.EnemyKillCount++;
+			}
             OnEntityDie.Invoke();
+		
             Die();
             return true;
         }

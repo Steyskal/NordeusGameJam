@@ -53,6 +53,31 @@ public class GameManager : MonoSingleton<GameManager>
 		}
 	}
 
+	[Header("Combo System")]
+	[SerializeField]
+	private int _comboCounter = 0;
+	public int ComboCounter
+	{
+		get
+		{
+			return _comboCounter;
+		}
+
+		set
+		{
+			if(_comboCounter < value)
+			{
+				_comboCounter = value;
+				OnComboCounterChange.Invoke (_comboCounter);
+			}
+		}
+	}
+
+	[Header("EnemyCount System")]
+	public int EnemyKillCount = 0;
+
+	public CustomIntEvent OnComboCounterChange = new CustomIntEvent ();
+
 	#region Coins
 
 	[Header ("Read-Only")]
