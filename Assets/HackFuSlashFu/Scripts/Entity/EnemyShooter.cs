@@ -17,7 +17,6 @@ public class EnemyShooter : Enemy
     public GameObject BulletPrefab;
     public Face FaceBehavior;
 
-
     private States _state = States.Shooting;
     private WaitForSeconds _waitDelay;
     protected override void Awake()
@@ -40,6 +39,7 @@ public class EnemyShooter : Enemy
     }
     IEnumerator Shot()
     {
+        OnAttackEvent.Invoke();
         GameObject bullet = Instantiate(BulletPrefab);
         bullet.transform.position = transform.position + transform.right;
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();

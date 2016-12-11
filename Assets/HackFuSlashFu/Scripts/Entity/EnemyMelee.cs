@@ -19,7 +19,6 @@ public class EnemyMelee : Enemy
     public OnCollider2DEvents ColliderEvents;
     public FaceForward FaceForward;
 
-    public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
     private States _state = States.Pursue;
     private WaitForSeconds _waitAttack;
     private WaitForSeconds _waitCheckAttack;

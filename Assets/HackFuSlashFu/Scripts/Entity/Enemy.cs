@@ -1,4 +1,5 @@
 ﻿using AI;
+using Happy;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class Enemy : Entity
     //TODO Score System
     public Happy.CustomUnityEvent<int> OnEnemyComboBonus = new Happy.CustomUnityEvent<int>();
     public AgentBehaviour Behaviour;
+    public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
+    public float KnockBackDuration = 0.6f;
 
     protected Agent2D _agent;
     protected Rigidbody2D _rb;
@@ -63,7 +66,7 @@ public class Enemy : Entity
     protected IEnumerator KnockBackPostEffect(bool behaviorEnabled)
     {
         OnBeforeKnockback(behaviorEnabled);
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(KnockBackDuration);
         OnAfterKnockback(behaviorEnabled);
     }
     protected virtual void OnBeforeKnockback(bool behaviorEnabled)
