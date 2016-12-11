@@ -240,9 +240,37 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
             Transform transf = null;
             if (spawns != null && spawns.Length > 0)
             {
-                transf = spawns[UnityEngine.Random.Range(0, spawns.Length)];
+                int index = UnityEngine.Random.Range(0, spawns.Length);
+                transf = spawns[index];
+                transf = CheckIfOtherObjectIsHere(transf);
             }
             return transf;
         }
+
+        public Transform CheckIfOtherObjectIsHere(Transform pos)
+        {
+            float radius = 1;
+            if (Physics2D.CircleCast(pos.position, radius, Vector2.zero))
+            {
+                foreach (Transform p in spawns)
+                {
+                    if (!Physics2D.CircleCast(pos.position, radius, Vector2.zero))
+                    {
+                        pos = p;
+                        break;
+                    }
+                }
+                if (pos)
+                    return pos;
+            }
+            else
+            {
+                return pos;
+            }
+
+            Debug.Log("Cannot find other position to spawn");
+            return pos;
+        }
+
     }
 }
