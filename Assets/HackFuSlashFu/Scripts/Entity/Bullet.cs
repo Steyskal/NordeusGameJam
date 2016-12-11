@@ -12,6 +12,8 @@ public class Bullet : MonoBehaviour
     public float BulletMaxDuration = 3f;
     public OnCollider2DEvents ColliderEvents;
 
+    private bool extendedDuration = false;
+
     void Start()
     {
         if (ColliderEvents)
@@ -21,19 +23,35 @@ public class Bullet : MonoBehaviour
 
     void OnTargetEnter(Transform target)
     {
-        Entity entity = GetComponent<Entity>();
-        if (entity)
+        if (!extendedDuration)
         {
-            Debug.Log("Bullet Damage on " + entity);
-            entity.ApplyDamage(1);
+            Entity entity = GetComponent<Entity>();
+            if (entity)
+            {
+                Debug.Log("Bullet Damage on " + entity);
+                entity.ApplyDamage(1);
+            }
             DestroyObject();
         }
 
     }
-    
+
+    public void ExtendDuration()
+    {
+        extendedDuration = true;
+    }
+
     void DestroyObject()
     {
-        Destroy(gameObject);
+        if (extendedDuration)
+        {
+            extendedDuration = false;
+            Invoke("DestroyObject", BulletMaxDuration);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Destroy()
