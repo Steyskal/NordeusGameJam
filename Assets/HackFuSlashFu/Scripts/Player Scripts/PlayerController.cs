@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     [Header("Knockback Properties")]
     public float KnockbackForce = 100.0f;
 
+	public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
+
     [Header("Special Attack Properties")]
     public float SpecialAttackModeDuration = 2.5f;
 
@@ -22,12 +24,16 @@ public class PlayerController : MonoBehaviour
     public float ComboResetTimer = 1.0f;
     public float ComboOpportunityTime = 2.0f;
 
+	[Header("Audio Properties")]
+	public List<AudioClip> AttackAudioClips = new List<AudioClip>();
+	private AudioSource _audioSource;
+
     [Header("Read-Only")]
     [SerializeField]
     private int _comboCounter = 0;
 
+	[HideInInspector]
     public CustomUnityEvent<int> OnComboCounterChangedEvent = new CustomUnityEvent<int>();
-    public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
 
     [SerializeField]
     private float _comboTimer = 0.0f;
@@ -57,6 +63,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         _transform = transform;
+		_audioSource = GetComponentInChildren<AudioSource> ();
     }
 
     void Update()
@@ -117,6 +124,8 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
+		_audioSource.PlayOneShot (AttackAudioClips [Random.Range (0, AttackAudioClips.Count)]);
+
         OnAttackEvent.Invoke();
         //		Debug.Log ("Attack");
         int newComboCount = _enemiesToAttack.Count;

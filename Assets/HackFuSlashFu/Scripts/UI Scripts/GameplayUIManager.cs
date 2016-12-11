@@ -33,6 +33,7 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 		ComboSlider.maxValue = Player.NeededCombo;
 
 		Player.OnComboCounterChangedEvent.AddListener (OnComboChangedEventListener);
+		GameManager.Instance.OnGameOverEvent.AddListener (OnGameOverEventListener);
 	}
 
 	void Update ()
@@ -55,5 +56,10 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 	public void OnComboChangedEventListener (int newCombo)
 	{
 		ComboSlider.value = newCombo;
+	}
+
+	public void OnGameOverEventListener()
+	{
+		GameOverCanvas.enabled = true;
 	}
 }
