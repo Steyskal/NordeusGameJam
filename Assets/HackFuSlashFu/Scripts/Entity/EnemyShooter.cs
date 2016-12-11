@@ -57,11 +57,14 @@ public class EnemyShooter : Enemy
     protected override void OnPlayerDie()
     {
         base.OnPlayerDie();
-        FaceBehavior.enabled = false;
-        Behaviour.enabled = false;
-        _enableShoot = false;
-        StopCoroutine(Shot());
-        Debug.Log("Player dead " + this);
+        if (GameManager.Instance.IsPlayersDead)
+        {
+            FaceBehavior.enabled = false;
+            Behaviour.enabled = false;  
+            _enableShoot = false;
+            StopCoroutine(Shot());
+            Debug.Log("Player dead " + this);
+        }
     }
 
     public void Shoot()
