@@ -26,7 +26,7 @@ namespace AI
             }
             else if (targetRequired)
             {
-                Debug.LogError("AgentBehaviour: Target is null");
+//                Debug.LogError("AgentBehaviour: Target is null");
             }
         }
         public virtual Steering GetSteering()

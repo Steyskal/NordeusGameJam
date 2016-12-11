@@ -42,17 +42,22 @@ namespace AI
         }
         public override Steering GetSteering()
         {
-            Vector3 direction = targetAux.transform.position - transform.position;
-            float distance = direction.magnitude;
-            float speed = agent.GetVelocity().magnitude;
-            float prediction;
-            if (speed <= distance / maxPrediction)
-                prediction = maxPrediction;
-            else
-                prediction = distance / speed;
-            target.transform.position = targetAux.transform.position;
-            target.transform.position += targetAgent.velocity * prediction;
-            return base.GetSteering();
+			if(targetAux)
+			{
+				Vector3 direction = targetAux.transform.position - transform.position;
+				float distance = direction.magnitude;
+				float speed = agent.GetVelocity().magnitude;
+				float prediction;
+				if (speed <= distance / maxPrediction)
+					prediction = maxPrediction;
+				else
+					prediction = distance / speed;
+				target.transform.position = targetAux.transform.position;
+				target.transform.position += targetAgent.velocity * prediction;
+			
+			}
+
+			return base.GetSteering();
         }
     }
 }
