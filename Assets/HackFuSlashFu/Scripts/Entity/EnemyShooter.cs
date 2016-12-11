@@ -11,25 +11,30 @@ public class EnemyShooter : Enemy
     {
         Shooting
     }
-    
+
     public float ShotForce = 100f;
+    public float FirstShootDelay = 1f;
     public float ShotDelay = 1f;
     public GameObject BulletPrefab;
     public Face FaceBehavior;
 
     private States _state = States.Shooting;
     private WaitForSeconds _waitDelay;
+    private WaitForSeconds _waitFirstDelay;
+    private bool _enableShoot = false;
     protected override void Awake()
     {
         base.Awake();
         _waitDelay = new WaitForSeconds(ShotDelay);
+        _waitFirstDelay = new WaitForSeconds(FirstShootDelay);
     }
 
     public override void Start()
     {
         base.Start();
         Behaviour.enabled = false;
-//        StartCoroutine(Shot());
+        _enableShoot = true;
+        StartCoroutine(FirstShot());
     }
     protected override void OnSetBehaviorTarget(GameObject target)
     {
@@ -37,26 +42,34 @@ public class EnemyShooter : Enemy
         FaceBehavior.target = target;
         FaceBehavior.enabled = true;
     }
+    IEnumerator FirstShot()
+    {
+        yield return _waitFirstDelay;
+        yield return Shot();
+    }
     IEnumerator Shot()
     {
         OnAttackEvent.Invoke();
-        GameObject bullet = Instantiate(BulletPrefab);
-        bullet.transform.position = transform.position + transform.right;
-        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-        rb.AddForce(transform.right * ShotForce, ForceMode2D.Impulse);
-        
         yield return _waitDelay;
         yield return Shot();
     }
 
-	public void Shoot()
-	{
-		OnAttackEvent.Invoke();
-		GameObject bullet = Instantiate(BulletPrefab);
-		bullet.transform.position = transform.position + transform.right;
-		Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-		rb.AddForce(transform.right * ShotForce, ForceMode2D.Impulse);
-	}
+    protected override void OnPlayerDie()
+    {
+        base.OnPlayerDie();
+        FaceBehavior.enabled = false;
+        _enableShoot = false;
+        StopCoroutine(Shot());
+        Debug.Log("Player dead " + this);
+    }
+
+    public void Shoot()
+    {;
+        GameObject bullet = Instantiate(BulletPrefab);
+        bullet.transform.position = transform.position + transform.right;
+        Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+        rb.AddForce(transform.right * ShotForce, ForceMode2D.Impulse);
+    }
 
     protected override void OnAfterKnockback(bool behaviorEnabled)
     {

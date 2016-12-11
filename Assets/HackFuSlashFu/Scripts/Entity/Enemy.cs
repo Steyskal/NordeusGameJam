@@ -12,6 +12,7 @@ public class Enemy : Entity
     public Happy.CustomUnityEvent<int> OnEnemyComboBonus = new Happy.CustomUnityEvent<int>();
     public AgentBehaviour Behaviour;
     public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
+    public CustomUnityEvent OnPlayerDieEvent = new CustomUnityEvent();
     public float KnockBackDuration = 0.6f;
     public float KockBackDisabledDuration = 0.2f;
 
@@ -62,6 +63,22 @@ public class Enemy : Entity
         steering.linear = force;
         _agent.SetSteering(steering,10);*/
         StartCoroutine(KnockBackPostEffect(Behaviour.enabled));
+    }
+    void Update()
+    {
+        if (GameManager.Instance.IsPlayersDead)
+        {
+            OnPlayerDie();
+            OnPlayerDieEvent.Invoke();
+        }
+
+    }
+    protected virtual void OnPlayerDie()
+    {
+        if (GameManager.Instance.IsPlayersDead)
+        {
+            Behaviour.enabled = false;
+        }
     }
 
     protected IEnumerator KnockBackPostEffect(bool behaviorEnabled)

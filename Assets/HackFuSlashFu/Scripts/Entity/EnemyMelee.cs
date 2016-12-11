@@ -16,7 +16,7 @@ public class EnemyMelee : Enemy
     public float AttackDamageCheckDelay = 0.1f;
     public float AttackDuration = 1f;
     public float AttackDistance = 2f;
-    public OnCollider2DEvents ColliderEvents;
+    //public OnCollider2DEvents ColliderEvents;
     public FaceForward FaceForward;
 
     private States _state = States.Pursue;
@@ -35,9 +35,9 @@ public class EnemyMelee : Enemy
     public override void Start()
     {
         base.Start();
-        ColliderEvents.OnTriggerEnterTransformEvent.AddListener(OnTargetEnter);
+        /*ColliderEvents.OnTriggerEnterTransformEvent.AddListener(OnTargetEnter);
         ColliderEvents.OnTriggerExitTransformEvent.AddListener(OnTargetExit);
-        ColliderEvents.OnTriggerStayEvent.AddListener(OnTriggerStay);
+        ColliderEvents.OnTriggerStayEvent.AddListener(OnTriggerStay);*/
         StartCoroutine(Pursue());
 
     }
@@ -47,6 +47,23 @@ public class EnemyMelee : Enemy
         FaceForward.target = target;
         FaceForward.enabled = true;
     }
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        if(col.transform.tag == "Player")
+        {
+            Entity entity = col.gameObject.GetComponentInChildren<Entity>();
+
+            if (entity)
+                entity.ApplyDamage(1);
+        }
+    }
+    protected override void OnPlayerDie()
+    {
+        base.OnPlayerDie();
+        FaceForward.enabled = false;
+    }
+
+    #region Not used - For Weapon
     void OnTriggerStay()
     {
         StartCoroutine(Attack());
@@ -62,7 +79,6 @@ public class EnemyMelee : Enemy
         if (_toAttack.Contains(target))
             _toAttack.Remove(target);
     }
-
     /// <summary>
     /// Attacks Player (if he is in PolygonCollider range)
     /// Killes player if he is also inside distance
@@ -101,6 +117,8 @@ public class EnemyMelee : Enemy
         }
         yield break;
     }
+
+    #endregion
     IEnumerator Pursue()
     {
         _state = States.Pursue;

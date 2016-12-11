@@ -6,9 +6,15 @@ using UnityEngine.Events;
 [DisallowMultipleComponent]
 public class Entity : MonoBehaviour
 {
+    [Header("Health")]
     public int InitialHealth = 10;
     public int MaxHealth = 10;
+
+    [Header("Destroying Object")]
     public float DestroyDelay = 0.5f;
+    public bool DestroyParent;
+    public GameObject EffectPrefabOnDestroy;
+    public bool IsPlayerEntity = false;
 
     [Header("Read-Only")]
     [SerializeField]
@@ -30,7 +36,7 @@ public class Entity : MonoBehaviour
         set
         {
             _currentHealth = value <= MaxHealth ? value : MaxHealth;
-            
+
         }
     }
 
@@ -50,6 +56,10 @@ public class Entity : MonoBehaviour
         CurrentHealth -= Mathf.Abs(damage);
         if (_currentHealth <= 0 && !_die)
         {
+            if (IsPlayerEntity)
+            {
+                GameManager.Instance.IsPlayersDead = true;
+            }
             OnEntityDie.Invoke();
             Die();
             return true;
@@ -66,7 +76,14 @@ public class Entity : MonoBehaviour
     {
         yield return _waitDestroy;
         Debug.Log(gameObject.name + " died.");
-
-        Destroy(gameObject);
+        if (EffectPrefabOnDestroy)
+        {
+            GameObject go = Instantiate(EffectPrefabOnDestroy);
+            go.transform.position = transform.position;
+        }
+        if (DestroyParent)
+            Destroy(transform.parent.gameObject);
+        else
+            Destroy(gameObject);
     }
 }
