@@ -128,6 +128,8 @@ public class PlayerController : MonoBehaviour
 
         //		Debug.Log ("Combo " + _comboCounter);
 
+		GameManager.Instance.ComboCounter = _comboCounter;
+
         if (_comboCounter >= NeededCombo)
             _hasComboOpportunity = true;
     }

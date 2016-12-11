@@ -65,6 +65,7 @@ public class Entity : MonoBehaviour
                 GameManager.Instance.IsPlayersDead = true;
             }
             OnEntityDie.Invoke();
+			GameManager.Instance.EnemyKillCount++;
             Die();
             return true;
         }
