@@ -21,6 +21,7 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
     public Wave[] Waves;
     public float TimeBetweenWaves = 5f;
     public bool LoopAfterComplete = false;
+    //public bool SpawnRandom = false;
 
     [Header("ReadOnly")]
     [SerializeField]
@@ -97,7 +98,8 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
     void SpawnEnemy(WaveEnemy waveEnemy)
     {
         Debug.Log("Spawning Enemy " + waveEnemy.enemy.name);
-        Transform spawnTransform = waveEnemy.GetRandomSpawn();
+        Transform spawnTransform;
+        spawnTransform = waveEnemy.GetRandomSpawn();
 
         if (spawnTransform == null)
             spawnTransform = _transform;
@@ -190,16 +192,34 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
         public WaveEnemy[] enemies;
         [Tooltip("Number of enemies to spawn")]
         public int count;
+        public bool spawnRandom = false;
         public float delay;
 
         public WaveEnemy GetWaveEnemy()
         {
-            int random = UnityEngine.Random.Range(0, 100);
             WaveEnemy enemy = null;
-            if (enemies != null && enemies.Length > 0)
+            if (!spawnRandom)
             {
-                enemy = enemies[random % enemies.Length];
+                int maxDiff = -1;
+                foreach (WaveEnemy e in enemies)
+                {
+                    if (e.Count - e.counter > maxDiff)
+                    {
+                        maxDiff = e.Count - e.counter;
+                        enemy = e;
+                    }
+                }
             }
+            if (spawnRandom || enemy == null)
+            {
+                int random = UnityEngine.Random.Range(0, 100);
+                if (enemies != null && enemies.Length > 0)
+                {
+                    enemy = enemies[random % enemies.Length];
+                }
+            }
+            if (enemy != null)
+                enemy.counter++;
             return enemy;
         }
     }
@@ -209,6 +229,9 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
     {
         public Transform enemy;
         public Transform[] spawns;
+        public int Count;
+        [HideInInspector]
+        public int counter = 0;
 
         public Transform GetRandomSpawn()
         {

@@ -69,6 +69,11 @@ public class Entity : MonoBehaviour
 
     public virtual void Die()
     {
+        if (EffectPrefabOnDestroy)
+        {
+            GameObject go = Instantiate(EffectPrefabOnDestroy);
+            go.transform.position = transform.position;
+        }
         _die = true;
         StartCoroutine(DoDie());
     }
@@ -76,11 +81,6 @@ public class Entity : MonoBehaviour
     {
         yield return _waitDestroy;
         Debug.Log(gameObject.name + " died.");
-        if (EffectPrefabOnDestroy)
-        {
-            GameObject go = Instantiate(EffectPrefabOnDestroy);
-            go.transform.position = transform.position;
-        }
         if (DestroyParent)
             Destroy(transform.parent.gameObject);
         else
