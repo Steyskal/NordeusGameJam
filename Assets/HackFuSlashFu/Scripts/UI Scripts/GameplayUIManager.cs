@@ -33,7 +33,8 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 
 	void Awake ()
 	{
-		ShouldDisplayTutorial = PlayerPrefs.GetInt ("ShouldDisplayTutorial", 1);
+//		ShouldDisplayTutorial = PlayerPrefs.GetInt ("ShouldDisplayTutorial", 1);
+		ShouldDisplayTutorial = 1;
 		IntroMouse.SetActive (ShouldDisplayTutorial == 1 ? true : false);
 
 		_audioListener = Camera.main.GetComponent<AudioListener> ();
