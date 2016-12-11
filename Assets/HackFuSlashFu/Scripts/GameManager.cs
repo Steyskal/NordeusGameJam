@@ -103,7 +103,6 @@ public class GameManager : MonoSingleton<GameManager>
 	#endregion
 
 	#region GameOverLogic
-	[HideInInspector]
 	public CustomUnityEvent OnGameOverEvent = new CustomUnityEvent();
 
 	public void GameOver()
