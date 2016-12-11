@@ -6,6 +6,15 @@ namespace AI
 {
     public class Agent2D : Agent
     {
+        bool spawnRotation = true;
+        protected override void Start()
+        {
+            steering = new Steering();
+            groups = new Dictionary<int, List<Steering>>();
+            orientation = rotation;
+            transform.Rotate(Vector3.forward, orientation);
+        }
+
         public override void Update()
         {
             orientation += rotation * Time.deltaTime;

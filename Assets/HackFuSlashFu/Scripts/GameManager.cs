@@ -34,6 +34,7 @@ public class GameManager : MonoSingleton<GameManager>
 	private Dictionary<ScoreBonusType, ScoreValuesInformation> _scoreValuesDict = new Dictionary<ScoreBonusType, ScoreValuesInformation> ();
 
 	public CustomIntEvent OnScoreChange = new CustomIntEvent ();
+    public Happy.CustomUnityEvent OnEntityHit = new CustomUnityEvent();
     public bool IsPlayersDead = false;
 
 	public Checkpoint CurrentCheckpoint

@@ -21,6 +21,7 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
     public Wave[] Waves;
     public float TimeBetweenWaves = 5f;
     public bool LoopAfterComplete = false;
+    //public bool SpawnRandom = false;
 
     [Header("ReadOnly")]
     [SerializeField]
@@ -35,6 +36,7 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
     public CountStringEvent OnWaveStartStringCount = new CountStringEvent();
     public CustomUnityEvent OnWavesCompleted = new CustomUnityEvent();
     public CustomUnityEvent OnWaveCompleted = new CustomUnityEvent();
+    public CountStringEvent OnWaveCompletedNextString = new CountStringEvent();
 
     private int _nextWave = 0;
     private float _searchCountdown = ENEMY_SEARCH_TIME_FREQUENCY;
@@ -43,7 +45,8 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
     [Header("Testing")]
     public int RemainingEnemies = 1;
     public bool StartOnStart = false;
-    
+    public bool SetEnemyRotation = true;
+
     void Awake()
     {
         __WaveCountDown = TimeBetweenWaves;
@@ -96,12 +99,32 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
     void SpawnEnemy(WaveEnemy waveEnemy)
     {
         Debug.Log("Spawning Enemy " + waveEnemy.enemy.name);
-        Transform spawnTransform = waveEnemy.GetRandomSpawn();
+        Transform spawnTransform;
+        spawnTransform = waveEnemy.GetRandomSpawn();
 
         if (spawnTransform == null)
             spawnTransform = _transform;
 
         Transform enemy = Instantiate(waveEnemy.enemy, spawnTransform.position, spawnTransform.rotation) as Transform;
+        if (SetEnemyRotation)
+        {
+            /// Calculating rotation;
+            GameObject obj = GameManager.Instance.GetPlayer(spawnTransform.position);
+            float targetOrientation = 0;
+            if (obj)
+            {
+                Vector3 direction = obj.transform.position - spawnTransform.position;
+                targetOrientation = Mathf.Atan2(direction.y, direction.x);
+                targetOrientation *= Mathf.Rad2Deg;
+
+                AI.Agent2D agent = enemy.GetComponent<AI.Agent2D>();
+                if (agent)
+                    agent.rotation = targetOrientation;
+                else
+                    enemy.transform.eulerAngles = new Vector3(0, 0, targetOrientation);
+            }
+        }
+
     }
     void WaveCompleted()
     {
@@ -126,9 +149,10 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
         {
             _nextWave++;
             _State = SpawnState.Counting;
+            OnWaveCompletedNextString.Invoke(Waves[_nextWave].name);
         }
     }
-    
+
     bool IsEnemyAlive()
     {
         bool alive = true;
@@ -170,16 +194,34 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
         public WaveEnemy[] enemies;
         [Tooltip("Number of enemies to spawn")]
         public int count;
+        public bool spawnRandom = false;
         public float delay;
 
         public WaveEnemy GetWaveEnemy()
         {
-            int random = UnityEngine.Random.Range(0, 100);
             WaveEnemy enemy = null;
-            if (enemies != null && enemies.Length > 0)
+            if (!spawnRandom)
             {
-                enemy = enemies[random % enemies.Length];
+                int maxDiff = -1;
+                foreach (WaveEnemy e in enemies)
+                {
+                    if (e.Count - e.counter > maxDiff)
+                    {
+                        maxDiff = e.Count - e.counter;
+                        enemy = e;
+                    }
+                }
             }
+            if (spawnRandom || enemy == null)
+            {
+                int random = UnityEngine.Random.Range(0, 100);
+                if (enemies != null && enemies.Length > 0)
+                {
+                    enemy = enemies[random % enemies.Length];
+                }
+            }
+            if (enemy != null)
+                enemy.counter++;
             return enemy;
         }
     }
@@ -189,6 +231,9 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
     {
         public Transform enemy;
         public Transform[] spawns;
+        public int Count;
+        [HideInInspector]
+        public int counter = 0;
 
         public Transform GetRandomSpawn()
         {

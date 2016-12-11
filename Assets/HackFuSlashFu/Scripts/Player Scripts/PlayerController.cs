@@ -10,6 +10,8 @@ public class PlayerController : MonoBehaviour
     [Header("Input Axis Properties")]
     public KeyCode AttackInput = KeyCode.Mouse0;
     public KeyCode SpecialAttackInput = KeyCode.Mouse1;
+    [Tooltip("Used only for repel")]
+    public float AttackDuration = 1.5f;
 
     [Header("Knockback Properties")]
     public float KnockbackForce = 100.0f;
@@ -47,6 +49,8 @@ public class PlayerController : MonoBehaviour
     private bool _isInSpecialAttackMode = false;
     [SerializeField]
     private List<Enemy> _enemiesToAttack = new List<Enemy>();
+    [HideInInspector]
+    public bool IsAttacking = false;
 
     public List<Enemy> EnemiesToAttack
     {
@@ -65,6 +69,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
+        IsAttacking = false;
         _transform = transform;
 		_audioSource = GetComponentInChildren<AudioSource> ();
 		_animator = GetComponentInChildren<Animator> ();
@@ -95,6 +100,16 @@ public class PlayerController : MonoBehaviour
             if (_comboOpportunityTimer >= ComboOpportunityTime)
                 _hasComboOpportunity = false;
         }
+    }
+    void SetIsAttacking(float duration)
+    {
+        StartCoroutine(SetIsAttackingForDuration(duration));
+    }
+    IEnumerator SetIsAttackingForDuration(float duration)
+    {
+        IsAttacking = true;
+        yield return new WaitForSeconds(duration);
+        IsAttacking = false;
     }
 
     private void ResetCombo()
@@ -128,7 +143,8 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
-		_audioSource.PlayOneShot (AttackAudioClips [Random.Range (0, AttackAudioClips.Count)]);
+        SetIsAttacking(AttackDuration);
+        _audioSource.PlayOneShot (AttackAudioClips [Random.Range (0, AttackAudioClips.Count)]);
 
         OnAttackEvent.Invoke();
         //		Debug.Log ("Attack");
@@ -166,6 +182,7 @@ public class PlayerController : MonoBehaviour
     {
         //		Debug.Log ("SpecialAttackModeOn");
 		SpecialAttackAudioSource.Play();
+        SetIsAttacking(SpecialAttackModeDuration);
 
         _hasComboOpportunity = false;
         _isInSpecialAttackMode = true;

@@ -33,7 +33,6 @@ public class EnemyShooter : Enemy
     {
         base.Start();
         Behaviour.enabled = false;
-        _enableShoot = true;
         StartCoroutine(FirstShot());
     }
     protected override void OnSetBehaviorTarget(GameObject target)
@@ -45,6 +44,7 @@ public class EnemyShooter : Enemy
     IEnumerator FirstShot()
     {
         yield return _waitFirstDelay;
+        _enableShoot = true;
         yield return Shot();
     }
     IEnumerator Shot()
