@@ -67,12 +67,16 @@ public class PlayerController : MonoBehaviour
 
 	private Animator _animator;
 
+	private Entity _entity;
+
     void Awake()
     {
         IsAttacking = false;
         _transform = transform;
 		_audioSource = GetComponentInChildren<AudioSource> ();
 		_animator = GetComponentInChildren<Animator> ();
+
+		_entity = GetComponentInChildren<Entity> ();
     }
 
     void Update()
@@ -182,6 +186,8 @@ public class PlayerController : MonoBehaviour
 
     private void StartSpecialAttackMode()
     {
+		_entity.CurrentHealth = 999;
+
         //		Debug.Log ("SpecialAttackModeOn");
 		SpecialAttackAudioSource.Play();
         SetIsAttacking(SpecialAttackModeDuration);
@@ -208,6 +214,7 @@ public class PlayerController : MonoBehaviour
             _enemiesToSpecialAttack.Remove(enemiesToRemove[i]);
         }
 
+		_enemiesToAttack.RemoveAll(enemy => enemy == null);
 		_enemiesToSpecialAttack.RemoveAll(enemy => enemy == null);
 
         Invoke("EndSpecialAttackMode", SpecialAttackModeDuration);
@@ -215,12 +222,15 @@ public class PlayerController : MonoBehaviour
 
     private void EndSpecialAttackMode()
     {
+		_enemiesToAttack.RemoveAll(enemy => enemy == null);
+		_enemiesToSpecialAttack.RemoveAll(enemy => enemy == null);
         //		Debug.Log ("SpecialAttackModeOff");
 		SpecialAttackAudioSource.Stop();
         ResetCombo();
 
         _isInSpecialAttackMode = false;
 		_animator.SetBool ("IsCombo", _isInSpecialAttackMode);
+		_entity.CurrentHealth = 1;
     }
 
     public void AddEnemyForSpecialAttak(Enemy enemy)
