@@ -22,6 +22,8 @@ public class Entity : MonoBehaviour
 
     [SerializeField]
     public UnityEvent OnEntityDie = new UnityEvent();
+    [SerializeField]
+    public UnityEvent OnEntityHit = new UnityEvent();
 
     protected WaitForSeconds _waitDestroy;
     bool _die = false;
@@ -53,7 +55,8 @@ public class Entity : MonoBehaviour
     /// <returns></returns>
     public virtual bool ApplyDamage(int damage, int comboBonus = 0)
     {
-        CurrentHealth -= Mathf.Abs(damage);
+        OnEntityHit.Invoke();
+           CurrentHealth -= Mathf.Abs(damage);
         if (_currentHealth <= 0 && !_die)
         {
             if (IsPlayerEntity)

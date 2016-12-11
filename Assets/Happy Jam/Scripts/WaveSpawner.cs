@@ -36,6 +36,7 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
     public CountStringEvent OnWaveStartStringCount = new CountStringEvent();
     public CustomUnityEvent OnWavesCompleted = new CustomUnityEvent();
     public CustomUnityEvent OnWaveCompleted = new CustomUnityEvent();
+    public CountStringEvent OnWaveCompletedNextString = new CountStringEvent();
 
     private int _nextWave = 0;
     private float _searchCountdown = ENEMY_SEARCH_TIME_FREQUENCY;
@@ -148,6 +149,7 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
         {
             _nextWave++;
             _State = SpawnState.Counting;
+            OnWaveCompletedNextString.Invoke(Waves[_nextWave].name);
         }
     }
 
