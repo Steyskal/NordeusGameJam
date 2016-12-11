@@ -26,7 +26,7 @@ public class GameManager : MonoSingleton<GameManager>
 	[Tooltip ("Define one for each ScoreBonusType")]
 	public ScoreValuesInformation[] ScoreValues = new ScoreValuesInformation[2];
 
-	private List<GameObject> _players = new List<GameObject> ();
+	public List<GameObject> _players = new List<GameObject> ();
 
 	[Header ("Checkpoint System")]
 	[SerializeField]
@@ -34,8 +34,8 @@ public class GameManager : MonoSingleton<GameManager>
 	private Dictionary<ScoreBonusType, ScoreValuesInformation> _scoreValuesDict = new Dictionary<ScoreBonusType, ScoreValuesInformation> ();
 
 	public CustomIntEvent OnScoreChange = new CustomIntEvent ();
-    public Happy.CustomUnityEvent OnEntityHit = new CustomUnityEvent();
-    public bool IsPlayersDead = false;
+	public Happy.CustomUnityEvent OnEntityHit = new CustomUnityEvent ();
+	public bool IsPlayersDead = false;
 
 	public Checkpoint CurrentCheckpoint
 	{
@@ -53,9 +53,10 @@ public class GameManager : MonoSingleton<GameManager>
 		}
 	}
 
-	[Header("Combo System")]
+	[Header ("Combo System")]
 	[SerializeField]
 	private int _comboCounter = 0;
+
 	public int ComboCounter
 	{
 		get
@@ -65,7 +66,7 @@ public class GameManager : MonoSingleton<GameManager>
 
 		set
 		{
-			if(_comboCounter < value)
+			if (_comboCounter < value)
 			{
 				_comboCounter = value;
 				OnComboCounterChange.Invoke (_comboCounter);
@@ -73,7 +74,7 @@ public class GameManager : MonoSingleton<GameManager>
 		}
 	}
 
-	[Header("EnemyCount System")]
+	[Header ("EnemyCount System")]
 	public int EnemyKillCount = 0;
 
 	public CustomIntEvent OnComboCounterChange = new CustomIntEvent ();
@@ -103,10 +104,11 @@ public class GameManager : MonoSingleton<GameManager>
 	#endregion
 
 	#region GameOverLogic
-	[HideInInspector]
-	public CustomUnityEvent OnGameOverEvent = new CustomUnityEvent();
 
-	public void GameOver()
+	[HideInInspector]
+	public CustomUnityEvent OnGameOverEvent = new CustomUnityEvent ();
+
+	public void GameOver ()
 	{
 		OnGameOverEvent.Invoke ();
 
@@ -114,7 +116,10 @@ public class GameManager : MonoSingleton<GameManager>
 		{
 			_players [i].SetActive (false);
 		}
+
+		IsPlayersDead = true;
 	}
+
 	#endregion
 
 	void Reset ()
@@ -128,6 +133,15 @@ public class GameManager : MonoSingleton<GameManager>
 		foreach (ScoreValuesInformation s in ScoreValues)
 		{
 			_scoreValuesDict.Add (s.Type, s);
+		}
+	}
+
+	void Update ()
+	{
+		if (_players.Count != 0 && !_players [0])
+		{
+			_players.Clear ();
+			GameOver ();
 		}
 	}
 
