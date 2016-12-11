@@ -8,6 +8,7 @@ using Happy;
 public class UIManager : MonoSingleton<UIManager>
 {
 	public Canvas MainMenuCanvas;
+	public Canvas CreditsCanvas;
 
 	void Awake()
 	{
@@ -20,6 +21,12 @@ public class UIManager : MonoSingleton<UIManager>
 		MainMenuCanvas.enabled = false;
 
 		SceneManagerExtension.LoadNextScene();
+	}
+
+	public void ToggleCredits()
+	{
+		MainMenuCanvas.enabled = !MainMenuCanvas.enabled;
+		CreditsCanvas.enabled = !CreditsCanvas.enabled;
 	}
 
 	public void QuitGame()
