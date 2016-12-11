@@ -24,6 +24,9 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 
 	[Header ("GameOver Properties")]
 	public Canvas GameOverCanvas;
+	public Text ScoreText;
+	public Text ComboText;
+	public Text EnemyText;
 
 	[Header ("Read-Only")]
 	[SerializeField]
@@ -63,6 +66,10 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 			PlayerPrefs.SetInt ("ShouldDisplayTutorial", 0);
 		}
 			
+		if (Player._isInSpecialAttackMode)
+		{
+			ComboSlider.value -= (ComboSlider.maxValue / Player.SpecialAttackModeDuration) * Time.deltaTime;
+		}
 	}
 
 	public void ToggleMute ()
@@ -80,27 +87,34 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 	{
 		ComboSlider.value = newCombo;
 
-		if(ComboSlider.value == 0)
+		if (ComboSlider.value == 0)
 		{
 			SigilAnimator.SetBool ("ComboOpportunity", false);
 			FillAnimator.SetBool ("ComboOpportunity", false);
 		}
-			
 
 		if (ComboSlider.value == ComboSlider.maxValue)
 		{
 			SigilAnimator.SetBool ("ComboOpportunity", true);
 			FillAnimator.SetBool ("ComboOpportunity", true);
 
-			if(ShouldDisplayTutorial == 1)
+			if (ShouldDisplayTutorial == 1)
 				ComboMouse.SetActive (true);
 		}
-			
 	}
 
 	public void OnGameOverEventListener ()
 	{
+		Invoke ("GameOver", 1.0f);
+	}
+
+	private void GameOver ()
+	{
 		GameOverCanvas.enabled = true;
+
+		ScoreText.text = GameManager.Instance.Score.ToString ();
+		ComboText.text = GameManager.Instance.ComboCounter.ToString ();
+		EnemyText.text = GameManager.Instance.EnemyKillCount.ToString ();
 	}
 
 	public void Restart ()
@@ -108,7 +122,7 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 		SceneManagerExtension.ReloadScene ();
 	}
 
-	public void LoadMainMenu()
+	public void LoadMainMenu ()
 	{
 		Time.timeScale = 1.0f;
 		SceneManager.LoadScene (0);
