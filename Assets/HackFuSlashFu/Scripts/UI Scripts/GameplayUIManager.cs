@@ -66,6 +66,10 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 			PlayerPrefs.SetInt ("ShouldDisplayTutorial", 0);
 		}
 			
+		if (Player._isInSpecialAttackMode)
+		{
+			ComboSlider.value -= (ComboSlider.maxValue / Player.SpecialAttackModeDuration) * Time.deltaTime;
+		}
 	}
 
 	public void ToggleMute ()
@@ -88,7 +92,6 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 			SigilAnimator.SetBool ("ComboOpportunity", false);
 			FillAnimator.SetBool ("ComboOpportunity", false);
 		}
-			
 
 		if (ComboSlider.value == ComboSlider.maxValue)
 		{
@@ -98,7 +101,6 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 			if (ShouldDisplayTutorial == 1)
 				ComboMouse.SetActive (true);
 		}
-			
 	}
 
 	public void OnGameOverEventListener ()
@@ -106,7 +108,7 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 		Invoke ("GameOver", 1.0f);
 	}
 
-	private void GameOver()
+	private void GameOver ()
 	{
 		GameOverCanvas.enabled = true;
 

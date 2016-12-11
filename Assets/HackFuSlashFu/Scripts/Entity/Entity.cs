@@ -67,9 +67,12 @@ public class Entity : MonoBehaviour
             if (IsPlayerEntity)
             {
                 GameManager.Instance.IsPlayersDead = true;
-            }
+			}else
+			{
+				GameManager.Instance.EnemyKillCount++;
+			}
             OnEntityDie.Invoke();
-			GameManager.Instance.EnemyKillCount++;
+		
             Die();
             return true;
         }

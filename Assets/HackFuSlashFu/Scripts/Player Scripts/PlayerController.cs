@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool _hasComboOpportunity = false;
     [SerializeField]
-    private bool _isInSpecialAttackMode = false;
+    public bool _isInSpecialAttackMode = false;
     [SerializeField]
     private List<Enemy> _enemiesToAttack = new List<Enemy>();
     [HideInInspector]
