@@ -113,8 +113,12 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
                 Vector3 direction = obj.transform.position - spawnTransform.position;
                 targetOrientation = Mathf.Atan2(direction.y, direction.x);
                 targetOrientation *= Mathf.Rad2Deg;
+
                 AI.Agent2D agent = enemy.GetComponent<AI.Agent2D>();
-                agent.rotation = targetOrientation;
+                if (agent)
+                    agent.rotation = targetOrientation;
+                else
+                    enemy.transform.eulerAngles = new Vector3(0, 0, targetOrientation);
             }
         }
 
