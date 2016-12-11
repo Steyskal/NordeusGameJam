@@ -103,6 +103,11 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 
 	public void OnGameOverEventListener ()
 	{
+		Invoke ("GameOver", 1.0f);
+	}
+
+	private void GameOver()
+	{
 		GameOverCanvas.enabled = true;
 
 		ScoreText.text = GameManager.Instance.Score.ToString ();
