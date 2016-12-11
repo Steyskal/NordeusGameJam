@@ -42,7 +42,7 @@ namespace AI
         }
         void OnDestroy()
         {
-            if (target.tag != "Player")
+            if (target && target.tag != "Player")
                 Destroy(target);
         }
 
