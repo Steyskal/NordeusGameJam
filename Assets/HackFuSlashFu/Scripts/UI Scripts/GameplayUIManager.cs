@@ -23,6 +23,7 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 	public Canvas PauseCanvas;
 
 	[Header ("GameOver Properties")]
+	public AudioSource GameOverAudioSource;
 	public Canvas GameOverCanvas;
 	public Text ScoreText;
 	public Text ComboText;
@@ -105,6 +106,7 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 
 	public void OnGameOverEventListener ()
 	{
+		GameOverAudioSource.Play ();
 		Invoke ("GameOver", 1.0f);
 	}
 
