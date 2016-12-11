@@ -29,7 +29,7 @@ public class EnemyShooter : Enemy
     {
         base.Start();
         Behaviour.enabled = false;
-        StartCoroutine(Shot());
+//        StartCoroutine(Shot());
     }
     protected override void OnSetBehaviorTarget(GameObject target)
     {
@@ -48,6 +48,15 @@ public class EnemyShooter : Enemy
         yield return _waitDelay;
         yield return Shot();
     }
+
+	public void Shoot()
+	{
+		OnAttackEvent.Invoke();
+		GameObject bullet = Instantiate(BulletPrefab);
+		bullet.transform.position = transform.position + transform.right;
+		Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+		rb.AddForce(transform.right * ShotForce, ForceMode2D.Impulse);
+	}
 
     protected override void OnAfterKnockback(bool behaviorEnabled)
     {

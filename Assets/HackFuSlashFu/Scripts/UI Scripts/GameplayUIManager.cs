@@ -62,4 +62,9 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 	{
 		GameOverCanvas.enabled = true;
 	}
+
+	public void Restart()
+	{
+		SceneManagerExtension.ReloadScene ();
+	}
 }
