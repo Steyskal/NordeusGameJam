@@ -15,6 +15,8 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 	[Header ("Combo Properties")]
 	public PlayerController Player;
 	public Slider ComboSlider;
+	public Animator SigilAnimator;
+	public Animator FillAnimator;
 
 	[Header ("Pause Properties")]
 	public KeyCode PauseKey = KeyCode.Escape;
@@ -77,8 +79,22 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 	{
 		ComboSlider.value = newCombo;
 
+		if(ComboSlider.value == 0)
+		{
+			SigilAnimator.SetBool ("ComboOpportunity", false);
+			FillAnimator.SetBool ("ComboOpportunity", false);
+		}
+			
+
 		if (ComboSlider.value == ComboSlider.maxValue)
-			ComboMouse.SetActive (true);
+		{
+			SigilAnimator.SetBool ("ComboOpportunity", true);
+			FillAnimator.SetBool ("ComboOpportunity", true);
+
+			if(ShouldDisplayTutorial == 1)
+				ComboMouse.SetActive (true);
+		}
+			
 	}
 
 	public void OnGameOverEventListener ()
