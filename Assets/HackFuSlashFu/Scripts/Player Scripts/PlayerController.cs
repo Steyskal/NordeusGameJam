@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Special Attack Properties")]
     public float SpecialAttackModeDuration = 2.5f;
+	public AudioSource SpecialAttackAudioSource;
 
     [Header("Combo Properties")]
     public int NeededCombo = 200;
@@ -164,6 +165,7 @@ public class PlayerController : MonoBehaviour
     private void StartSpecialAttackMode()
     {
         //		Debug.Log ("SpecialAttackModeOn");
+		SpecialAttackAudioSource.Play();
 
         _hasComboOpportunity = false;
         _isInSpecialAttackMode = true;
@@ -195,7 +197,7 @@ public class PlayerController : MonoBehaviour
     private void EndSpecialAttackMode()
     {
         //		Debug.Log ("SpecialAttackModeOff");
-
+		SpecialAttackAudioSource.Stop();
         ResetCombo();
 
         _isInSpecialAttackMode = false;
