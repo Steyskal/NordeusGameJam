@@ -13,6 +13,7 @@ public class EnemyMelee : Enemy
         Pursue,
         Attack
     }
+    public float SpawnDelay = 0.5f;
     public float AttackDamageCheckDelay = 0.1f;
     public float AttackDuration = 1f;
     public float AttackDistance = 2f;
@@ -22,6 +23,7 @@ public class EnemyMelee : Enemy
     private States _state = States.Pursue;
     private WaitForSeconds _waitAttack;
     private WaitForSeconds _waitCheckAttack;
+    private WaitForSeconds _waitStartDelay;
 
     private List<Transform> _toAttack = new List<Transform>();
 
@@ -30,6 +32,8 @@ public class EnemyMelee : Enemy
         base.Awake();
         _waitAttack = new WaitForSeconds(AttackDuration);
         _waitCheckAttack = new WaitForSeconds(AttackDamageCheckDelay);
+        _waitStartDelay = new WaitForSeconds(SpawnDelay);
+        Debug.Log(transform.eulerAngles);
     }
 
     public override void Start()
@@ -38,14 +42,13 @@ public class EnemyMelee : Enemy
         /*ColliderEvents.OnTriggerEnterTransformEvent.AddListener(OnTargetEnter);
         ColliderEvents.OnTriggerExitTransformEvent.AddListener(OnTargetExit);
         ColliderEvents.OnTriggerStayEvent.AddListener(OnTriggerStay);*/
-        StartCoroutine(Pursue());
+        StartCoroutine(StartPursue());
 
     }
     protected override void OnSetBehaviorTarget(GameObject target)
     {
-        base.OnSetBehaviorTarget(target);
+        Behaviour.target = target;
         FaceForward.target = target;
-        FaceForward.enabled = true;
     }
     void OnCollisionEnter2D(Collision2D col)
     {
@@ -119,6 +122,11 @@ public class EnemyMelee : Enemy
     }
 
     #endregion
+    IEnumerator StartPursue()
+    {
+        yield return _waitStartDelay;
+        yield return Pursue();
+    }
     IEnumerator Pursue()
     {
         _state = States.Pursue;

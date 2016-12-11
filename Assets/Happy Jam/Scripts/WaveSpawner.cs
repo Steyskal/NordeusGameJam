@@ -43,7 +43,8 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
     [Header("Testing")]
     public int RemainingEnemies = 1;
     public bool StartOnStart = false;
-    
+    public bool SetEnemyRotation = true;
+
     void Awake()
     {
         __WaveCountDown = TimeBetweenWaves;
@@ -102,6 +103,21 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
             spawnTransform = _transform;
 
         Transform enemy = Instantiate(waveEnemy.enemy, spawnTransform.position, spawnTransform.rotation) as Transform;
+        if (SetEnemyRotation)
+        {
+            /// Calculating rotation;
+            GameObject obj = GameManager.Instance.GetPlayer(spawnTransform.position);
+            float targetOrientation = 0;
+            if (obj)
+            {
+                Vector3 direction = obj.transform.position - spawnTransform.position;
+                targetOrientation = Mathf.Atan2(direction.y, direction.x);
+                targetOrientation *= Mathf.Rad2Deg;
+                AI.Agent2D agent = enemy.GetComponent<AI.Agent2D>();
+                agent.rotation = targetOrientation;
+            }
+        }
+
     }
     void WaveCompleted()
     {
@@ -128,7 +144,7 @@ public class WaveSpawner : MonoSingleton<WaveSpawner>
             _State = SpawnState.Counting;
         }
     }
-    
+
     bool IsEnemyAlive()
     {
         bool alive = true;

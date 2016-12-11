@@ -24,6 +24,7 @@ public class Enemy : Entity
         base.Awake();
         _agent = GetComponent<Agent2D>();
         _rb = GetComponent<Rigidbody2D>();
+
     }
     public virtual void Start()
     {
