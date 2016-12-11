@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     [Header("Knockback Properties")]
     public float KnockbackForce = 100.0f;
 
+	public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
+
     [Header("Special Attack Properties")]
     public float SpecialAttackModeDuration = 2.5f;
 
@@ -22,9 +24,9 @@ public class PlayerController : MonoBehaviour
     public float ComboResetTimer = 1.0f;
     public float ComboOpportunityTime = 2.0f;
 
-    public OnCollider2DEvents BulletTriggerEvents;
-
-	public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
+	[Header("Audio Properties")]
+	public List<AudioClip> AttackAudioClips = new List<AudioClip>();
+	private AudioSource _audioSource;
 
     [Header("Read-Only")]
     [SerializeField]
@@ -44,20 +46,12 @@ public class PlayerController : MonoBehaviour
     private bool _isInSpecialAttackMode = false;
     [SerializeField]
     private List<Enemy> _enemiesToAttack = new List<Enemy>();
-    private List<Bullet> _bullets = new List<Bullet>();
 
     public List<Enemy> EnemiesToAttack
     {
         get
         {
             return _enemiesToAttack;
-        }
-    }
-    public List<Bullet> Bullets
-    {
-        get
-        {
-            return _bullets;
         }
     }
 
@@ -69,10 +63,7 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         _transform = transform;
-    }
-    void Start()
-    {
-        //BulletTriggerEvents.On
+		_audioSource = GetComponentInChildren<AudioSource> ();
     }
 
     void Update()
@@ -133,23 +124,9 @@ public class PlayerController : MonoBehaviour
 
     private void Attack()
     {
+		_audioSource.PlayOneShot (AttackAudioClips [Random.Range (0, AttackAudioClips.Count)]);
+
         OnAttackEvent.Invoke();
-        List < Bullet> _bulletsTmp = _bullets;
-        for(int i = 0; i < _bulletsTmp.Count; i++)
-        {
-            if (_bulletsTmp[i] != null)
-            {
-                Rigidbody2D rb = _bulletsTmp[i].GetComponent<Rigidbody2D>();
-                _bulletsTmp[i].ExtendDuration();
-                rb.AddForce(transform.right * 10, ForceMode2D.Impulse);
-            }
-            else
-            {
-                _bullets.Remove(_bulletsTmp[i]);
-            }
-        }
-
-
         //		Debug.Log ("Attack");
         int newComboCount = _enemiesToAttack.Count;
 
