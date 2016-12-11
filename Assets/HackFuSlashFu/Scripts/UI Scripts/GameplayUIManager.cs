@@ -1,12 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using Happy;
 
 public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 {
+	[Header ("Tutorial Properites")]
+	public GameObject IntroMouse;
+	public GameObject ComboMouse;
+
 	[Header ("Combo Properties")]
 	public PlayerController Player;
 	public Slider ComboSlider;
@@ -15,15 +20,20 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 	public KeyCode PauseKey = KeyCode.Escape;
 	public Canvas PauseCanvas;
 
-	[Header("GameOver Properties")]
+	[Header ("GameOver Properties")]
 	public Canvas GameOverCanvas;
 
 	[Header ("Read-Only")]
 	[SerializeField]
 	private AudioListener _audioListener;
 
+	private int ShouldDisplayTutorial = 1;
+
 	void Awake ()
 	{
+		ShouldDisplayTutorial = PlayerPrefs.GetInt ("ShouldDisplayTutorial", 1);
+		IntroMouse.SetActive (ShouldDisplayTutorial == 1 ? true : false);
+
 		_audioListener = Camera.main.GetComponent<AudioListener> ();
 
 		PauseCanvas.enabled = false;
@@ -38,8 +48,18 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 
 	void Update ()
 	{
+		if (Input.GetKeyDown (KeyCode.Mouse0))
+			IntroMouse.SetActive (false);
+
 		if (Input.GetKeyDown (PauseKey))
 			TogglePause ();
+
+		if (Input.GetKeyDown (KeyCode.Mouse1) && ComboMouse.activeSelf)
+		{
+			ComboMouse.SetActive (false);
+			PlayerPrefs.SetInt ("ShouldDisplayTutorial", 0);
+		}
+			
 	}
 
 	public void ToggleMute ()
@@ -56,15 +76,24 @@ public class GameplayUIManager : MonoSingleton<GameplayUIManager>
 	public void OnComboChangedEventListener (int newCombo)
 	{
 		ComboSlider.value = newCombo;
+
+		if (ComboSlider.value == ComboSlider.maxValue)
+			ComboMouse.SetActive (true);
 	}
 
-	public void OnGameOverEventListener()
+	public void OnGameOverEventListener ()
 	{
 		GameOverCanvas.enabled = true;
 	}
 
-	public void Restart()
+	public void Restart ()
 	{
 		SceneManagerExtension.ReloadScene ();
+	}
+
+	public void LoadMainMenu()
+	{
+		Time.timeScale = 1.0f;
+		SceneManager.LoadScene (0);
 	}
 }
