@@ -56,6 +56,7 @@ public class Entity : MonoBehaviour
     public virtual bool ApplyDamage(int damage, int comboBonus = 0)
     {
         OnEntityHit.Invoke();
+        GameManager.Instance.OnEntityHit.Invoke();
            CurrentHealth -= Mathf.Abs(damage);
         if (_currentHealth <= 0 && !_die)
         {

@@ -29,12 +29,18 @@ public class TweenColor : MonoBehaviour
             Sprite.color = t.CurrentValue;
         }, (t) =>
         {
-            TweenFactory.Tween("ColorDown" + _id, TargetColor, NormalColor,TargetNormalDuration, TweenScaleFunctions.SineEaseInOut, (t1) =>
-            {
-                Sprite.color = t1.CurrentValue;
-            }, (t1) => {  }
+            TweenFactory.Tween("ColorDown" + _id, TargetColor, NormalColor, TargetNormalDuration, TweenScaleFunctions.SineEaseInOut, (t1) =>
+             {
+                 Sprite.color = t1.CurrentValue;
+             }, (t1) => { }
             );
         });
-        
+
+    }
+
+    void OnDestroy()
+    {
+        TweenFactory.RemoveTweenKey("ColorDown" + _id, TweenStopBehavior.DoNotModify);
+        TweenFactory.RemoveTweenKey("ColorDown" + _id, TweenStopBehavior.DoNotModify);
     }
 }

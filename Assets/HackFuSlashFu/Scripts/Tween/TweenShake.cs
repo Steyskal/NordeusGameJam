@@ -15,7 +15,6 @@ public class TweenShake : MonoBehaviour
     public Vector3 Offset4;
 
     public float DurationPerTween = 0.1f;
-    public PlayerController _player;
     public int _id;
     private Vector3 startingPos;
     private Transform _transform;
@@ -32,9 +31,7 @@ public class TweenShake : MonoBehaviour
     }
     void Start()
     {
-        GameObject player = GameManager.Instance.GetPlayer(Vector2.zero);
-        _player = player.GetComponent<PlayerController>();
-        _player.OnComboCounterChangedEvent.AddListener(delegate (int a) { Tween(); });
+        GameManager.Instance.OnEntityHit.AddListener(delegate () { Tween(); });
     }
 
     public void Tween()
