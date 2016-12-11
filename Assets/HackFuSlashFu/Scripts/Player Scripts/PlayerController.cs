@@ -150,7 +150,10 @@ public class PlayerController : MonoBehaviour
             _enemiesToAttack.Remove(enemiesToRemove[i]);
             _enemiesToSpecialAttack.Remove(enemiesToRemove[i]);
         }
-			
+
+		_enemiesToAttack.RemoveAll(enemy => enemy == null);
+		_enemiesToSpecialAttack.RemoveAll(enemy => enemy == null);
+
 		if (newComboCount != 0)
 		{
 			_comboOpportunityTimer = 0.0f;
@@ -174,7 +177,7 @@ public class PlayerController : MonoBehaviour
 
             KnockbackTarget(_enemiesToSpecialAttack[i]);
 
-            if (_enemiesToSpecialAttack[i].ApplyDamage(1, _comboCounter))
+            if (_enemiesToSpecialAttack[i].ApplyDamage(999, _comboCounter))
                 enemiesToRemove.Add(_enemiesToSpecialAttack[i]);
         }
 
@@ -183,6 +186,8 @@ public class PlayerController : MonoBehaviour
             _enemiesToAttack.Remove(enemiesToRemove[i]);
             _enemiesToSpecialAttack.Remove(enemiesToRemove[i]);
         }
+
+		_enemiesToSpecialAttack.RemoveAll(enemy => enemy == null);
 
         Invoke("EndSpecialAttackMode", SpecialAttackModeDuration);
     }
@@ -202,7 +207,7 @@ public class PlayerController : MonoBehaviour
         if (_isInSpecialAttackMode)
         {
             //			Debug.Log (enemy.name + " killed.");
-            enemy.ApplyDamage(1, _comboCounter);
+			enemy.ApplyDamage(999, _comboCounter);
         }
         else
             _enemiesToSpecialAttack.Add(enemy);
