@@ -58,13 +58,14 @@ public class EnemyShooter : Enemy
     {
         base.OnPlayerDie();
         FaceBehavior.enabled = false;
+        Behaviour.enabled = false;
         _enableShoot = false;
         StopCoroutine(Shot());
         Debug.Log("Player dead " + this);
     }
 
     public void Shoot()
-    {;
+    {
         GameObject bullet = Instantiate(BulletPrefab);
         bullet.transform.position = transform.position + transform.right;
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();

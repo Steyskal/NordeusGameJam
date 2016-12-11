@@ -42,7 +42,8 @@ namespace AI
         }
         void OnDestroy()
         {
-            Destroy(target);
+            if (target.tag != "Player")
+                Destroy(target);
         }
 
         public override Steering GetSteering()
