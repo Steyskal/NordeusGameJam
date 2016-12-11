@@ -13,6 +13,7 @@ public class Enemy : Entity
     public AgentBehaviour Behaviour;
     public CustomUnityEvent OnAttackEvent = new CustomUnityEvent();
     public float KnockBackDuration = 0.6f;
+    public float KockBackDisabledDuration = 0.2f;
 
     protected Agent2D _agent;
     protected Rigidbody2D _rb;
@@ -66,6 +67,11 @@ public class Enemy : Entity
     protected IEnumerator KnockBackPostEffect(bool behaviorEnabled)
     {
         OnBeforeKnockback(behaviorEnabled);
+        if (KockBackDisabledDuration > 0)
+            Invoke("ResetKnockback", KockBackDisabledDuration);
+        else
+            _isKnockbacked = false;
+
         yield return new WaitForSeconds(KnockBackDuration);
         OnAfterKnockback(behaviorEnabled);
     }
@@ -77,6 +83,9 @@ public class Enemy : Entity
     {
         _rb.velocity = Vector3.zero;
         Behaviour.enabled = behaviorEnabled;
+    }
+    void ResetKnockback()
+    {
         _isKnockbacked = false;
     }
 
